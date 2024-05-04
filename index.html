@@ -1,160 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-	<title>Invoice Generator</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For Bani</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 50px;
+    }
+    #heart {
+        width: 300px; /* Increased width */
+        height: 300px; /* Increased height */
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%); /* Center the image */
+        z-index: 9999;
+    }
+    #container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 10px;
+        padding-bottom: 40px;
+        border: 2px solid black;
+        border-radius: 10px;
+        background-color: #f0f0f0;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    #buttons {
+        margin-top: 20px;
+    }
+    button {
+        padding: 10px 20px;
+        margin: 0 10px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+    #noButton {
+        margin-top: 20px;
+        position: relative; /* Added */
+        transition: right 0.5s ease; /* Added */
+        cursor: pointer; /* Added */
+    }
+</style>
+<img id="heart" src="mochi-peachcat-cute-cat.gif" alt="Heart Animation">
 
-	<style>
-
-		body {
-			padding: 40px;
-		}
-
-		button {
-			padding: 12px 50px;
-			border: none;
-			background-color: rgb(124, 102, 29);
-			color: rgb(0, 0, 0) bold;
-			cursor: pointer;
-			display: inline-block;
-		}
-
-		input {
-			padding: 12px 20px;
-		}
-	</style>
 </head>
 <body>
+    <h1>Hola miss Bani - do you still want to talk to Rashminder?</h1>
+    <div id="container">
+        <div id="buttons">
+            <button onclick="handleAnswer('yes')">Yes</button>
+            <button id="noButton" onclick="handleAnswer('no')" onmousemove="moveCursor(event)">No</button>
+        </div>
+        <div id="box"></div>
+    </div>
+    
 
-    <input type="bill" placeholder="Bill to" />
-    <input type="load" placeholder="Load Number" />
-	<input type="rate" placeholder="Load Amount" />
-    <input type="invoice" placeholder="Invoice Number" />
-    <input type="date" placeholder="Enter Date" />
+    <script>
+        function handleAnswer(value) {
+            const box = document.getElementById('box');
+            if (value === 'no') {
+                box.style.marginTop = '0px';
+                document.getElementById('heart').style.display = 'none'; // Hide the heart animation
+            } else {
+                box.style.marginTop = '0px';
+                box.innerHTML = '<img id="heart" src="peach-peachdance.gif" alt="Heart Animation">';
+            }
+        }
 
-	<hr />
-
-	<button style="font-weight: bold;">Generate Invoice</button>
-
-
-	<script 
-		src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js" 
-	  integrity="sha256-vIL0pZJsOKSz76KKVCyLxzkOT00vXs+Qz4fYRVMoDhw="
-	  crossorigin="anonymous">
-	</script>
-    <script src="https://unpkg.com/jspdf-autotable@3.5.22/dist/jspdf.plugin.autotable.js"></script>
-
-	<script>
-
-		// init the jsPDF library
-		const pdf = new jsPDF();
-
-		// select the button
-		let button = document.querySelector('button');
-		// select the input
-		let rate = document.querySelector('input[type="rate"]');
-        let date = document.querySelector('input[type="date"]');
-        let load = document.querySelector('input[type="load"]');
-        let invoice = document.querySelector('input[type="invoice"]');
-        let bill = document.querySelector('input[type="bill"]');
-
-		// add 'click' event listener for the button
-		button.addEventListener('click', printPDF)
-
-		// actual PDF options
-		function printPDF() {
-
-            pdf.setFontSize(10.5)
-            // company info
-            pdf.text(10, 15, 'SNA TRANSPORT INC.', { font: 'bold'})
-            pdf.text(10, 20, '8100 Vegas Cir, West Chester, OH 45069')
-            pdf.text(10, 25, 'Email: snatransport12@gmail.com')
-            pdf.text(10, 30, 'Phone: (513) 462-5849')
-
-            // invoice info
-            pdf.text(`Invoice #: ${invoice.value}`, 170, 15, { align: 'right'})
-            pdf.text(`Date: ${date.value}`, 170, 20, { align: 'right'})
-            pdf.text(`Bill to: ${bill.value}`, 150, 35, 'center')
-
-            // set table margin
-            let wantedTableWidth = 110;
-            let pageWidth = pdf.internal.pageSize.width;
-            let margin = (pageWidth - wantedTableWidth) / 2;
-
-            // table for driver and truck info
-            pdf.autoTable({
-                startY: 50,
-                theme: 'grid',
-                margin: {left: margin, right: margin},
-                styles: { 
-                    fillColor: [0, 0, 0],
-                    align: 'center'
-                },
-                columnStyles: {
-                    0: {
-                        halign: 'left',
-                        cellWidth: 55,
-                        fillColor: [255, 255, 255],
-                    },
-                    1: {
-                        halign: 'left',
-                        cellWidth: 55,
-                        fillColor: [255, 255, 255],
-                    }
-                },
-                color: 'black',
-                head: [['Driver', 'Truck']],
-                body: [['Kul', '702']]
-            })
-
-            // table for load info
-            pdf.autoTable({
-                startY: 70,
-                theme: 'grid',
-                styles: { 
-                    fillColor: [0, 0, 0],
-                    halign: 'center'
-                        
-                },
-                columnStyles: {
-                    0: {
-                        halign: 'left',
-                        cellWidth: 20,
-                        fillColor: [255, 255, 255],
-                    },
-                    1: {
-                        halign: 'left',
-                        cellWidth: 70,
-                        cellLength: 20,
-                        fillColor: [255, 255, 255],
-                    },
-                    2: {
-                        halign: 'left',
-                        cellWidth: 65,
-                        fillColor: [255, 255, 255],
-                    },
-                    3: {
-                        halign: 'left',
-                        cellWidth: 25,
-                        fillColor: [255, 255, 255],
-                    }
-                },
-                fillColor: 'black',
-                head: [['Item', 'Load #', 'Description', 'Amount']],
-                body: [
-                ['Line Haul', `${load.value}`, , `$${rate.value}`],
-                ['', '', 'Total', `$${rate.value}`],
-                ],
-            })
-            var label = `${load.value}`
-
-			pdf.save(`Load ${label} - SNA TRANSPORT - MC 873145.pdf`);
-
-		}
-
-	</script>
-
+        function moveCursor(event) {
+            const noButton = document.getElementById('noButton');
+            noButton.style.right = '2000px'; // Move the cursor right by 20px
+            setTimeout(() => {
+                noButton.style.right = '0'; // Reset the cursor position after a short delay
+            }, 500); // Adjust this delay as needed (500ms = 0.5s)
+        }
+    </script>
 </body>
 </html>
