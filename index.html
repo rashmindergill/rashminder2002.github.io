@@ -56,6 +56,7 @@
         <div id="buttons">
             <button onclick="handleAnswer('yes')">Yes</button>
             <button id="noButton" onclick="handleAnswer('no')" onmousemove="moveCursor(event)">No</button>
+            <button onclick="handleAnswer('notSure')">Not Sure</button> <!-- Added Not Sure option -->
         </div>
         <div id="box"></div>
     </div>
@@ -68,6 +69,9 @@
                 box.style.marginTop = '0px'
                 box.innerHTML = '<img id="heart" src="sad-face-spongebob.gif" alt="Heart Animation">';
                 document.getElementById('heart').style.display = 'none'; // Hide the heart animation
+            } else if (value === 'notSure') {
+                box.style.marginTop = '0px';
+                box.innerHTML = '<p>But why?</p>';
             } else {
                 box.style.marginTop = '0px';
                 box.innerHTML = '<img id="heart" src="peach-peachdance.gif" alt="Heart Animation">';
