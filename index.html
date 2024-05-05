@@ -10,13 +10,13 @@
         text-align: center;
         margin: 50px;
     }
-    #heart {
-        width: 300px; /* Increased width */
-        height: 300px; /* Increased height */
+    #animation {
+        width: 300px;
+        height: 300px;
         position: absolute;
         top: 50%;
         left: 50%;
-        transform: translate(-50%, -50%); /* Center the image */
+        transform: translate(-50%, -50%);
         z-index: 9999;
     }
     #container {
@@ -42,12 +42,12 @@
     }
     #noButton {
         margin-top: 20px;
-        position: relative; /* Added */
-        transition: right 0.5s ease; /* Added */
-        cursor: pointer; /* Added */
+        position: relative; 
+        transition: right 0.5s ease; 
+        cursor: pointer; 
     }
 </style>
-<img id="heart" src="mochi-peachcat-cute-cat.gif" alt="Heart Animation">
+<img id="animation" src="mochi-peachcat-cute-cat.gif" alt=" Animation">
 
 </head>
 <body>
@@ -56,7 +56,7 @@
         <div id="buttons">
             <button onclick="handleAnswer('yes')">Yes</button>
             <button id="noButton" onclick="handleAnswer('no')" onmousemove="moveCursor(event)">No</button>
-            <button onclick="handleAnswer('notSure')">Not Sure</button> <!-- Added Not Sure option -->
+            <button onclick="handleAnswer('notSure')">Not Sure</button>
         </div>
         <div id="box"></div>
     </div>
@@ -67,23 +67,23 @@
             const box = document.getElementById('box');
             if (value === 'no') {
                 box.style.marginTop = '0px'
-                box.innerHTML = '<img id="heart" src="sad-face-spongebob.gif" alt="Heart Animation">';
-                document.getElementById('heart').style.display = 'none'; // Hide the heart animation
+                box.innerHTML = '<img id="animation" src="sad-face-spongebob.gif" alt=" Animation">';
+                document.getElementById('animation').style.display = 'none';
             } else if (value === 'notSure') {
                 box.style.marginTop = '0px';
                 box.innerHTML = '<p>But why?</p>';
             } else {
                 box.style.marginTop = '0px';
-                box.innerHTML = '<img id="heart" src="peach-peachdance.gif" alt="Heart Animation">';
+                box.innerHTML = '<img id="animation" src="peach-peachdance.gif" alt=" Animation">';
             }
         }
 
         function moveCursor(event) {
             const noButton = document.getElementById('noButton');
-            noButton.style.right = '0px'; // Move the cursor right by 20px
+            noButton.style.right = '0px';
             setTimeout(() => {
-                noButton.style.right = '0'; // Reset the cursor position after a short delay
-            }, 500); // Adjust this delay as needed (500ms = 0.5s)
+                noButton.style.right = '0';
+            }, 500);
         }
     </script>
 </body>
