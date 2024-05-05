@@ -65,7 +65,8 @@
         function handleAnswer(value) {
             const box = document.getElementById('box');
             if (value === 'no') {
-                box.style.marginTop = '0px';
+                box.style.marginTop = '0px'
+                box.innerHTML = '<img id="heart" src="sad-face-spongebob.gif" alt="Heart Animation">';
                 document.getElementById('heart').style.display = 'none'; // Hide the heart animation
             } else {
                 box.style.marginTop = '0px';
@@ -75,7 +76,7 @@
 
         function moveCursor(event) {
             const noButton = document.getElementById('noButton');
-            noButton.style.right = '2000px'; // Move the cursor right by 20px
+            noButton.style.right = '0px'; // Move the cursor right by 20px
             setTimeout(() => {
                 noButton.style.right = '0'; // Reset the cursor position after a short delay
             }, 500); // Adjust this delay as needed (500ms = 0.5s)
