@@ -1,90 +1,256 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>For Bani</title>
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        text-align: center;
-        margin: 50px;
-    }
-    #animation {
-        width: 300px;
-        height: 300px;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 9999;
-    }
-    #container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 10px;
-        padding-bottom: 40px;
-        border: 2px solid black;
-        border-radius: 10px;
-        background-color: #f0f0f0;
-        max-width: 400px;
-        margin: 0 auto;
-    }
-    #buttons {
-        margin-top: 20px;
-    }
-    button {
-        padding: 10px 20px;
-        margin: 0 10px;
-        font-size: 16px;
-        cursor: pointer;
-    }
-    #noButton {
-        margin-top: 20px;
-        position: relative; 
-        transition: right 0.5s ease; 
-        cursor: pointer; 
-    }
-</style>
-<img id="animation" src="mochi-peachcat-cute-cat.gif" alt=" Animation">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Invoice Generator</title>
 
+    <style>
+        body {
+            padding: 40px;
+            font-family: Arial, sans-serif;
+        }
+
+        button {
+            padding: 12px 50px;
+            border: none;
+            background-color: rgb(124, 102, 29);
+            color: rgb(255, 255, 255);
+            cursor: pointer;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        input, select {
+            padding: 10px;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 18px;
+            text-decoration: underline;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-gap: 20px;
+        }
+
+        .container > div {
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
 </head>
 <body>
-    <h1>Hola miss Bani - do you still want to talk to Rashminder?</h1>
-    <div id="container">
-        <div id="buttons">
-            <button onclick="handleAnswer('yes')">Yes</button>
-            <button id="noButton" onclick="handleAnswer('no')" onmousemove="moveCursor(event)">No</button>
-            <button onclick="handleAnswer('notSure')">Not Sure</button>
+    <h1 class="section-title">Dispatch and Trip Report</h1>
+
+    <div class="container">
+        <div>
+            <h2>SNA TRANSPORT</h2>
+            <p>8100 Vegas Cir, West Chester, OH 45069</p>
+            <p>PU DATE: <span id="puDate">2024-05-05</span> | DATE: <span id="tripDate">2024-05-06</span></p>
         </div>
-        <div id="box"></div>
+        <div>
+            <h2>TRACTOR/ TRUCK NO.</h2>
+            <input type="text" id="tractorTruckNo" placeholder="Enter Tractor/Truck Number" value="12345">
+        </div>
     </div>
-    
 
+    <div class="container">
+        <div>
+            <h3>Dispatch Information</h3>
+            <table>
+                <tr>
+                    <th>DRIVER/ CONTRACTOR:</th>
+                    <td colspan="2"><input type="text" id="driverContractor" placeholder="Enter Driver/Contractor" value="John Doe"></td>
+                </tr>
+                <tr>
+                    <th>ORIGIN:</th>
+                    <td><input type="text" id="origin" placeholder="Enter Origin" value="City A"></td>
+                    <th>DESTINATION:</th>
+                    <td><input type="text" id="destination1" placeholder="Enter Destination" value="City B"></td>
+                </tr>
+                <tr>
+                    <th>DESTINATION:</th>
+                    <td><input type="text" id="destination2" placeholder="Enter Destination" value="City C"></td>
+                    <th>B/L #:</th>
+                    <td><input type="text" id="blNumber" placeholder="Enter B/L Number" value="BL12345"></td>
+                </tr>
+                <tr>
+                    <th>PRO#:</th>
+                    <td><input type="text" id="proNumber" placeholder="Enter PRO Number" value="PRO98765"></td>
+                    <th>TRIP LEASE#:</th>
+                    <td><input type="text" id="tripLeaseNumber" placeholder="Enter Trip Lease Number" value="TL54321"></td>
+                </tr>
+                <tr>
+                    <th>SHIPPER:</th>
+                    <td colspan="4"><input type="text" id="shipper" placeholder="Enter Shipper" value="ABC Company"></td>
+                </tr>
+                <tr>
+                    <th>ADDRESS:</th>
+                    <td colspan="4"><input type="text" id="shipperAddress" placeholder="Enter Shipper Address" value="123 Main St"></td>
+                </tr>
+                <tr>
+                    <th>CITY:</th>
+                    <td><input type="text" id="shipperCity" placeholder="Enter Shipper City" value="City D"></td>
+                    <th>STATE:</th>
+                    <td><input type="text" id="shipperState" placeholder="Enter Shipper State" value="State X"></td>
+                    <th>ZIP:</th>
+                    <td><input type="text" id="shipperZip" placeholder="Enter Shipper ZIP" value="12345"></td>
+                </tr>
+                <tr>
+                    <th>COSIGNEE:</th>
+                    <td colspan="4"><input type="text" id="consignee" placeholder="Enter Consignee" value="XYZ Corporation"></td>
+                </tr>
+                <tr>
+                    <th>ADDRESS:</th>
+                    <td colspan="4"><input type="text" id="consigneeAddress" placeholder="Enter Consignee Address" value="456 Oak Ave"></td>
+                </tr>
+                <tr>
+                    <th>CITY:</th>
+                    <td><input type="text" id="consigneeCity" placeholder="Enter Consignee City" value="City E"></td>
+                    <th>STATE:</th>
+                    <td><input type="text" id="consigneeState" placeholder="Enter Consignee State" value="State Y"></td>
+                    <th>ZIP:</th>
+                    <td><input type="text" id="consigneeZip" placeholder="Enter Consignee ZIP" value="54321"></td>
+                </tr>
+            </table>
+        </div>
+        <div>
+            <h3>Trip Information</h3>
+            <table>
+                <tr>
+                    <th>Trailer No:</th>
+                    <td><input type="text" id="trailerNo" placeholder="Enter Trailer Number" value="T123"></td>
+                    <th>Fleet No:</th>
+                    <td><input type="text" id="fleetNo" placeholder="Enter Fleet Number" value="F456"></td>
+                    <th>Location:</th>
+                    <td><input type="text" id="location" placeholder="Enter Location" value="Location XYZ"></td>
+                </tr>
+            </table>
+            <label for="dispatchInstructions">DISPATCH Special Instruction:</label>
+            <textarea id="dispatchInstructions" rows="4" placeholder="Enter Dispatch Special Instructions"></textarea>
+        </div>
+    </div>
+
+    <div class="container">
+        <div>
+            <h3>Trip Report</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>DATE</th>
+                        <th>STATE</th>
+                        <th>HIGHWAYS - USED</th>
+                        <th>NON- TOLL</th>
+                        <th>TOLL</th>
+                        <th>GAL/ LITERS</th>
+                        <th>VENDERS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td contenteditable>2024-05-06</td>
+                        <td contenteditable>State X</td>
+                        <td contenteditable>Highway A, Highway B</td>
+                        <td contenteditable>100</td>
+                        <td contenteditable>50</td>
+                        <td contenteditable>500</td>
+                        <td contenteditable>Vendor XYZ</td>
+                    </tr>
+                    <tr>
+                        <td contenteditable>2024-05-07</td>
+                        <td contenteditable>State Y</td>
+                        <td contenteditable>Highway C, Highway D</td>
+                        <td contenteditable>120</td>
+                        <td contenteditable>60</td>
+                        <td contenteditable>600</td>
+                        <td contenteditable>Vendor ABC</td>
+                    </tr>
+                    <!-- Add more rows as needed -->
+                </tbody>
+            </table>
+            <div style="text-align: right;">
+                <strong>Total:</strong> <span id="totalGallons">1100</span>
+            </div>
+        </div>
+        <div>
+            <h3>Driver's Signature</h3>
+            <p>Signature: _______________________</p>
+        </div>
+    </div>
+
+    <button onclick="generatePDF()">Download Dispatch and Trip Report</button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js" 
+        integrity="sha256-vIL0pZJsOKSz76KKVCyLxzkOT00vXs+Qz4fYRVMoDhw="
+        crossorigin="anonymous">
+    </script>
     <script>
-        function handleAnswer(value) {
-            const box = document.getElementById('box');
-            if (value === 'no') {
-                box.style.marginTop = '0px'
-                box.innerHTML = '<img id="animation" src="sad-face-spongebob.gif" alt=" Animation">';
-                document.getElementById('animation').style.display = 'none';
-            } else if (value === 'notSure') {
-                box.style.marginTop = '0px';
-                box.innerHTML = '<p>But why?</p>';
-            } else {
-                box.style.marginTop = '0px';
-                box.innerHTML = '<img id="animation" src="peach-peachdance.gif" alt=" Animation">';
-            }
-        }
+        function generatePDF() {
+            const pdf = new jsPDF();
 
-        function moveCursor(event) {
-            const noButton = document.getElementById('noButton');
-            noButton.style.right = '0px';
-            setTimeout(() => {
-                noButton.style.right = '0';
-            }, 500);
+            // Set data for PDF here
+            const title = "DISPATCH AND TRIP REPORT";
+            const address = "SNA TRANSPORT\n8100 Vegas Cir, West Chester, OH 45069";
+            const tractorTruckNo = document.getElementById('tractorTruckNo').value;
+            const puDate = document.getElementById('puDate').textContent;
+            const tripDate = document.getElementById('tripDate').textContent;
+            const dispatchInstructions = document.getElementById('dispatchInstructions').value;
+            const totalGallons = document.getElementById('totalGallons').textContent;
+
+            pdf.text(title, 105, 10, null, null, 'center');
+            pdf.text(address, 105, 20, null, null, 'center');
+
+            pdf.text(`Tractor/Truck No.: ${tractorTruckNo}`, 10, 40);
+            pdf.text(`PU DATE: ${puDate} | DATE: ${tripDate}`, 10, 50);
+
+            pdf.text("Dispatch Information", 10, 70);
+            // Populate dispatch information into the PDF
+
+            pdf.text("Trip Information", 105, 70, null, null, 'center');
+            // Populate trip information into the PDF
+
+            pdf.text("DISPATCH Special Instruction:", 105, 180, null, null, 'center');
+            pdf.text(dispatchInstructions, 105, 190, null, null, 'center');
+
+            pdf.text("Trip Report", 10, 210);
+            // Populate trip report into the PDF
+
+            pdf.text(`Total: ${totalGallons}`, 190, 210, null, null, 'right');
+
+            pdf.text("Driver's Signature", 105, 250, null, null, 'center');
+            pdf.text("Signature: _______________________", 105, 260, null, null, 'center');
+
+            pdf.save(`Dispatch_and_Trip_Report.pdf`);
         }
     </script>
+
 </body>
 </html>
