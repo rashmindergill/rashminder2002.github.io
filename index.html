@@ -1,160 +1,311 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-	<title>Invoice Generator</title>
+    <title>SNA Invoicing</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0 auto;
+            padding: 10px;
+            color: #333;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 24px;
+            color: #444;
+        }
+        h3 {
+            text-align: center;
+            margin-top: 5px;
+            margin-bottom: 20px;
+            font-size: 16px;
+            color: #444;
+        }
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+            align-items: center;
+        }
+        button {
+            padding: 12px 24px;
+            border: 1px solid #aaa;
+            background-color: #f9f9f9;
+            color: #333;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 16px;
+            width: 100%;
+            max-width: 200px;
+        }
+        button:hover {
+            background-color: #ddd;
+        }
+        input, select {
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            width: 100%;
+            max-width: 300px;
+        }
+        .invoice-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 7px;
+            margin-bottom: 15px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .invoice-row button {
+            padding: 8px 16px;
+            font-size: 14px;
+            border-radius: 4px;
+            width: 100%;
+            max-width: 120px;
+        }
+        .remove-row {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .remove-row:hover {
+            background-color: #c0392b;
+        }
+        .clear-all {
+            background-color: #f39c12;
+            color: white;
+        }
+        .clear-all:hover {
+            background-color: #e67e22;
+        }
 
-	<style>
-
-		body {
-			padding: 40px;
-		}
-
-		button {
-			padding: 12px 50px;
-			border: none;
-			background-color: rgb(124, 102, 29);
-			color: rgb(0, 0, 0) bold;
-			cursor: pointer;
-			display: inline-block;
-		}
-
-		input {
-			padding: 12px 20px;
-		}
-	</style>
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 20px;
+            }
+            h3 {
+                font-size: 14px;
+            }
+            button {
+                font-size: 14px;
+                padding: 10px;
+            }
+            input, select {
+                font-size: 14px;
+                padding: 8px;
+            }
+            .invoice-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
 </head>
 <body>
 
-    <input type="bill" placeholder="Bill to" />
-    <input type="load" placeholder="Load Number" />
-	<input type="rate" placeholder="Load Amount" />
-    <input type="invoice" placeholder="Invoice Number" />
-    <input type="date" placeholder="Enter Date" />
-
-	<hr />
-
-	<button style="font-weight: bold;">Generate Invoice</button>
+    <h1>SNA Transport</h1>
+    <h3>Invoice Generator</h3>
+    <hr style="border: 1px solid #0000003c; width: 100%; margin: 20px auto;">
 
 
-	<script 
-		src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js" 
-	  integrity="sha256-vIL0pZJsOKSz76KKVCyLxzkOT00vXs+Qz4fYRVMoDhw="
-	  crossorigin="anonymous">
-	</script>
+    <div style="margin: 10px auto; width: 95%; text-align: center;" id="invoice-container">
+        <!-- Invoice rows will be dynamically added here -->
+    </div>
+
+
+    <div class="button-container">
+        <button class="add-row">Add Invoice</button>
+        <button class="clear-all">Clear All</button>
+        <button id="generate-invoices">Generate Invoice(s)</button>
+    </div>
+
+    <script 
+        src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js" 
+        integrity="sha256-vIL0pZJsOKSz76KKVCyLxzkOT00vXs+Qz4fYRVMoDhw=" 
+        crossorigin="anonymous">
+    </script>
     <script src="https://unpkg.com/jspdf-autotable@3.5.22/dist/jspdf.plugin.autotable.js"></script>
 
-	<script>
+    <script>
+        const invoiceContainer = document.getElementById('invoice-container');
+        const addRowButton = document.querySelector('.add-row');
+        const clearAllButton = document.querySelector('.clear-all');
+        const generateInvoicesButton = document.getElementById('generate-invoices');
 
-		// init the jsPDF library
-		const pdf = new jsPDF();
+        function addInvoiceRow() {
+            const row = document.createElement('div');
+            row.classList.add('invoice-row');
+            row.innerHTML = `
+                <input type="text" class="load" placeholder="Load Number" />
+                <input type="text" class="bill" placeholder="Bill to" />
+                <input type="number" class="rate" placeholder="Load Amount" />
+                <select class="driver">
+                    <option value="" disabled selected>Select Driver</option>
+                    <option value="Kuljeet">Kuljeet</option>
+                    <option value="Harpreet">Harpreet</option>
+                </select>
+                <input type="text" class="truck" placeholder="Truck Number" />
+                <input type="text" class="invoice" placeholder="Invoice Number" readonly />
+                <input type="date" class="date" />
+                <button class="remove-row">Remove</button>
+                <hr style="border: 1px solid #0000001c; width: 100%; margin: 1px auto;">
+            `;
 
-		// select the button
-		let button = document.querySelector('button');
-		// select the input
-		let rate = document.querySelector('input[type="rate"]');
-        let date = document.querySelector('input[type="date"]');
-        let load = document.querySelector('input[type="load"]');
-        let invoice = document.querySelector('input[type="invoice"]');
-        let bill = document.querySelector('input[type="bill"]');
+            // Synchronize fields and handle driver selection
+            const dateInput = row.querySelector('.date');
+            const loadInput = row.querySelector('.load');
+            const invoiceInput = row.querySelector('.invoice');
+            const driverDropdown = row.querySelector('.driver');
+            const truckInput = row.querySelector('.truck');
 
-		// add 'click' event listener for the button
-		button.addEventListener('click', printPDF)
+            dateInput.value = new Date().toISOString().split('T')[0];
 
-		// actual PDF options
-		function printPDF() {
+            // Auto-fill invoice number based on load number
+            loadInput.addEventListener('input', () => {
+                invoiceInput.value = `${loadInput.value}`;
+            });
 
-            pdf.setFontSize(10.5)
-            // company info
-            pdf.text(10, 15, 'SNA TRANSPORT INC.', { font: 'bold'})
-            pdf.text(10, 20, '8100 Vegas Cir, West Chester, OH 45069')
-            pdf.text(10, 25, 'Email: snatransport12@gmail.com')
-            pdf.text(10, 30, 'Phone: (513) 462-5849')
+            driverDropdown.addEventListener('change', () => {
+                truckInput.value = driverDropdown.value === "Kuljeet" ? "702" : driverDropdown.value === "Harpreet" ? "47" : "";
+            });
 
-            // invoice info
-            pdf.text(`Invoice #: ${invoice.value}`, 170, 15, { align: 'right'})
-            pdf.text(`Date: ${date.value}`, 170, 20, { align: 'right'})
-            pdf.text(`Bill to: ${bill.value}`, 150, 35, 'center')
+            // Remove functionality
+            row.querySelector('.remove-row').addEventListener('click', () => row.remove());
+            invoiceContainer.appendChild(row);
+        }
 
-            // set table margin
-            let wantedTableWidth = 110;
-            let pageWidth = pdf.internal.pageSize.width;
-            let margin = (pageWidth - wantedTableWidth) / 2;
+        function clearAllRows() {
+            invoiceContainer.innerHTML = '';
+        }
 
-            // table for driver and truck info
-            pdf.autoTable({
-                startY: 50,
-                theme: 'grid',
-                margin: {left: margin, right: margin},
-                styles: { 
-                    fillColor: [0, 0, 0],
-                    align: 'center'
-                },
-                columnStyles: {
-                    0: {
-                        halign: 'left',
-                        cellWidth: 55,
-                        fillColor: [255, 255, 255],
-                    },
-                    1: {
-                        halign: 'left',
-                        cellWidth: 55,
-                        fillColor: [255, 255, 255],
-                    }
-                },
-                color: 'black',
-                head: [['Driver', 'Truck']],
-                body: [['Kul', '702']]
-            })
+        function generateInvoicePDF(row) {
+    const pdf = new jsPDF();
+    
+    const bill = row.querySelector('.bill').value;
+    const load = row.querySelector('.load').value;
+    const rate = row.querySelector('.rate').value;
+    const invoice = row.querySelector('.invoice').value;
+    const date = row.querySelector('.date').value;
+    const driver = row.querySelector('.driver').value;
+    const truck = row.querySelector('.truck').value;
 
-            // table for load info
-            pdf.autoTable({
-                startY: 70,
-                theme: 'grid',
-                styles: { 
-                    fillColor: [0, 0, 0],
-                    halign: 'center'
-                        
-                },
-                columnStyles: {
-                    0: {
-                        halign: 'left',
-                        cellWidth: 20,
-                        fillColor: [255, 255, 255],
-                    },
-                    1: {
-                        halign: 'left',
-                        cellWidth: 70,
-                        cellLength: 20,
-                        fillColor: [255, 255, 255],
-                    },
-                    2: {
-                        halign: 'left',
-                        cellWidth: 65,
-                        fillColor: [255, 255, 255],
-                    },
-                    3: {
-                        halign: 'left',
-                        cellWidth: 25,
-                        fillColor: [255, 255, 255],
-                    }
-                },
-                fillColor: 'black',
-                head: [['Item', 'Load #', 'Description', 'Amount']],
-                body: [
-                ['Line Haul', `${load.value}`, , `$${rate.value}`],
-                ['', '', 'Total', `$${rate.value}`],
-                ],
-            })
-            var label = `${load.value}`
+    pdf.setFontSize(10.5);
 
-			pdf.save(`Load ${label} - SNA TRANSPORT - MC 873145.pdf`);
+    // Company Information
+    pdf.text(10, 15, 'SNA TRANSPORT INC.');
+    pdf.text(10, 20, '8100 Vegas Cir, West Chester, OH 45069');
+    pdf.text(10, 25, 'Email: snatransport12@gmail.com');
+    pdf.text(10, 30, 'Phone: (513) 462-5849');
 
-		}
+    // Invoice Info
+    pdf.text(`Invoice #: ${invoice}`, 170, 15, { align: 'right' });
+    pdf.text(`Date: ${date}`, 170, 20, { align: 'right' });
+    pdf.text(`Bill to: ${bill}`, 150, 35, 'center');
 
-	</script>
+    // Center Table Margin Setup
+    const wantedTableWidth = 110;
+    const pageWidth = pdf.internal.pageSize.width;
+    const margin = (pageWidth - wantedTableWidth) / 2;
+
+    // Driver and Truck Info Table
+    pdf.autoTable({
+        startY: 50,
+        theme: 'grid',
+        margin: { left: margin, right: margin },
+        styles: { fillColor: [0, 0, 0], align: 'center' },
+        columnStyles: {
+            0: { halign: 'left', cellWidth: 55, fillColor: [255, 255, 255] },
+            1: { halign: 'left', cellWidth: 55, fillColor: [255, 255, 255] }
+        },
+        color: 'black',
+        head: [['Driver', 'Truck']],
+        body: [[driver, truck]]
+    });
+
+    // Load Info Table
+    pdf.autoTable({
+        startY: 70,
+        theme: 'grid',
+        styles: { fillColor: [0, 0, 0], halign: 'center' },
+        columnStyles: {
+            0: { halign: 'left', cellWidth: 20, fillColor: [255, 255, 255] },
+            1: { halign: 'left', cellWidth: 70, fillColor: [255, 255, 255] },
+            2: { halign: 'left', cellWidth: 65, fillColor: [255, 255, 255] },
+            3: { halign: 'left', cellWidth: 25, fillColor: [255, 255, 255] }
+        },
+        fillColor: 'black',
+        head: [['Item', 'Load #', 'Description', 'Amount']],
+        body: [
+            ['Line Haul', `${load}`, '', `$${rate}`],
+            ['', '', 'Total', `$${rate}`]
+        ]
+    });
+
+    // Save the PDF
+    pdf.save(`Load ${load} - SNA TRANSPORT - MC 873145.pdf`);
+}
+
+
+function generateInvoices() {
+    const rows = document.querySelectorAll('.invoice-row');
+    rows.forEach(row => {
+        generateInvoicePDF(row);
+    });
+}
+
+            const rows = document.querySelectorAll('.invoice-row');
+            rows.forEach(row => {
+                const pdf = new jsPDF();
+                const bill = row.querySelector('.bill').value;
+                const load = row.querySelector('.load').value;
+                const rate = row.querySelector('.rate').value;
+                const invoice = row.querySelector('.invoice').value;
+                const date = row.querySelector('.date').value;
+                const driver = row.querySelector('.driver').value;
+                const truck = row.querySelector('.truck').value;
+
+                pdf.setFontSize(12);
+                pdf.text("SNA TRANSPORT INC.", 10, 10);
+                pdf.text("8100 Vegas Cir, West Chester, OH 45069", 10, 20);
+                pdf.text("Email: snatransport12@gmail.com", 10, 30);
+                pdf.text("Phone: (513) 462-5849", 10, 40);
+                pdf.text(`Invoice #: ${invoice}`, 150, 10, { align: 'right' });
+                pdf.text(`Date: ${date}`, 150, 20, { align: 'right' });
+                pdf.text(`Bill to: ${bill}`, 10, 50);
+
+                pdf.autoTable({
+                    startY: 70,
+                    theme: 'plain',
+                    head: [['Driver', 'Truck']],
+                    body: [[driver, truck]],
+                });
+
+                pdf.autoTable({
+                    startY: 100,
+                    theme: 'plain',
+                    head: [['Item', 'Load #', 'Description', 'Amount']],
+                    body: [['Line Haul', load, '', `$${rate}`], ['', '', 'Total', `$${rate}`]],
+                });
+
+                pdf.save(`Load ${load} - Invoice.pdf`);
+            });
+
+        // Event Listeners
+        addRowButton.addEventListener('click', addInvoiceRow);
+        clearAllButton.addEventListener('click', clearAllRows);
+        generateInvoicesButton.addEventListener('click', () => {
+            const rows = document.querySelectorAll('.invoice-row');
+            rows.forEach(generateInvoicePDF);
+        });
+    </script>
 
 </body>
 </html>
