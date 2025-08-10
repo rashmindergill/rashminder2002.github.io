@@ -595,7 +595,7 @@
         function drawHeader(pdf) {
             pdf.setTextColor(0, 0, 0);
             pdf.setFont('helvetica', 'bold'); pdf.setFontSize(18);
-            pdf.text('SNA TRANSPORT INC.', 12, 14);
+            pdf.text('SNA TRANSPORT INC.', 11.75, 14);
 
             pdf.setFont('helvetica', 'normal'); pdf.setFontSize(11.5);
             pdf.text('8100 Vegas Cir, West Chester, OH 45069', 12, 20);
@@ -631,8 +631,8 @@
             // Bill To (outlined box, no fills)
             pdf.setDrawColor(210); pdf.setLineWidth(0.2);
             pdf.line(12, 46, pdf.internal.pageSize.width - 12, 46);
-            pdf.setFont('helvetica', 'bold'); pdf.text('Bill To:', 14, 39);
-            pdf.setFont('helvetica', 'normal'); pdf.text(bill || '-', 30, 39);
+            pdf.setFont('helvetica', 'bold'); pdf.text('Bill To:', 13, 39);
+            pdf.setFont('helvetica', 'normal'); pdf.text(bill || '-', 29, 39);
 
             // Keep your exact table width math for centered small table
             const wantedTableWidth = 110;
@@ -768,9 +768,9 @@
 
 
             // Footer
-            pdf.line(12, 275, pdf.internal.pageSize.width - 12, 275);
+            pdf.line(12, 280, pdf.internal.pageSize.width - 12, 280);
             pdf.setFontSize(9.5); pdf.setTextColor(100);
-            pdf.text('Thank you for your business! Please remit payment to SNA TRANSPORT INC. - MC 873145', 33, 280);
+            pdf.text('Thank you for your business! Please remit payment to SNA TRANSPORT INC. - MC 873145', 33, 285);
 
             if (opts.download) {
                 const safeLoad = (load || 'N-A').toString().replace(/[^\w\- ]+/g, '');
