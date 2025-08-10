@@ -322,6 +322,275 @@
             margin-top: 6px;
         }
 
+        /* Broker combo: input + caret, same look as driver */
+        .select.combo {
+            position: relative;
+        }
+
+        .select.combo .select-input {
+            width: 100%;
+            padding: 11px 36px 11px 12px;
+            /* room for caret */
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: #fff;
+            font-size: 15px;
+            color: var(--ink);
+            transition: border-color .15s ease, box-shadow .15s ease;
+        }
+
+        .select.combo .select-input:focus {
+            outline: none;
+            border-color: #d0d0d0;
+            box-shadow: var(--ring);
+        }
+
+        .select.combo .select-caret-btn {
+            position: absolute;
+            top: 50%;
+            right: 8px;
+            transform: translateY(-50%);
+            width: 28px;
+            height: 28px;
+            border: 0;
+            background: transparent;
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+        }
+
+        .select.combo .select-caret-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .select.combo .select-list {
+            min-width: 100%;
+        }
+
+        /* match input width */
+
+
+        /* ===== Dark Theme — Midnight Bluish ===== */
+        body.dark {
+            /* Palette */
+            --bg: #0b1220;
+            /* page background (midnight navy) */
+            --card: #0f1b31;
+            /* elevated surfaces/cards */
+            --bg-alt: #0c172c;
+            /* subtle contrast background */
+            --ink: #e6edf6;
+            /* primary text */
+            --muted: #9fb0cc;
+            /* secondary text */
+            --line: #223456;
+            /* borders/dividers */
+            --accent: #4f8cff;
+            /* focus/interactive accent */
+            --radius: 16px;
+            --shadow: 0 12px 28px rgba(2, 16, 40, .55);
+            --ring: 0 0 0 4px rgba(79, 140, 255, .18);
+
+            background: radial-gradient(1200px 800px at 20% -10%, #0e1a33 0%, #0b1220 55%) fixed, var(--bg);
+            color: var(--ink);
+        }
+
+        /* Header/brand */
+        body.dark .brand .logo {
+            border-color: var(--line);
+            background: linear-gradient(180deg, #10213d, #0f1b31);
+            box-shadow: var(--shadow);
+            color: var(--ink);
+        }
+
+        body.dark h1.heading {
+            color: var(--ink);
+        }
+
+        body.dark .subhead {
+            color: var(--muted);
+        }
+
+        /* Divider */
+        body.dark .divider {
+            background: linear-gradient(90deg, transparent, rgba(159, 176, 204, .35), transparent);
+        }
+
+        /* Cards / rows */
+        body.dark .invoice-row {
+            background: var(--card);
+            border-color: var(--line);
+            box-shadow: var(--shadow);
+        }
+
+        /* Fields + placeholders */
+        body.dark .field label {
+            color: #c7d4ea;
+        }
+
+        body.dark input,
+        body.dark select,
+        body.dark textarea {
+            background: #122441;
+            color: var(--ink);
+            border: 1px solid var(--line);
+        }
+
+        body.dark input::placeholder,
+        body.dark textarea::placeholder {
+            color: rgba(159, 176, 204, .75);
+        }
+
+        body.dark input:focus,
+        body.dark select:focus,
+        body.dark textarea:focus {
+            border-color: #335b97;
+            box-shadow: var(--ring);
+        }
+
+        /* Buttons */
+        body.dark .btn {
+            background: #10233f;
+            color: var(--ink);
+            border-color: var(--line);
+            box-shadow: var(--shadow);
+        }
+
+        body.dark .btn:hover {
+            background: #132a4c;
+        }
+
+        body.dark .btn:active {
+            background: #0e1f38;
+        }
+
+        body.dark .btn svg {
+            stroke: var(--ink);
+        }
+
+        /* Icon-only buttons */
+        body.dark .icon-btn {
+            background: #10233f;
+            border-color: var(--line);
+        }
+
+        body.dark .icon-btn:hover {
+            background: #132a4c;
+        }
+
+        body.dark .icon-btn svg {
+            stroke: var(--ink);
+        }
+
+        /* Custom select (driver) */
+        body.dark .select-trigger {
+            background: #122441;
+            border-color: var(--line);
+            color: var(--ink);
+        }
+
+        body.dark .select-trigger:focus {
+            border-color: #335b97;
+            box-shadow: var(--ring);
+        }
+
+        body.dark .select-list {
+            background: #0f1b31;
+            border-color: var(--line);
+            box-shadow: 0 16px 40px rgba(2, 16, 40, .65);
+        }
+
+        body.dark .option {
+            color: var(--ink);
+        }
+
+        body.dark .option:hover {
+            background: rgba(79, 140, 255, .12);
+        }
+
+        body.dark .opt-icon {
+            border-color: var(--line);
+            background: #122441;
+            color: #c7d4ea;
+        }
+
+        /* Broker combo (input-first) */
+        body.dark .select.combo .select-input {
+            background: #122441;
+            border-color: var(--line);
+            color: var(--ink);
+        }
+
+        body.dark .select.combo .select-input:focus {
+            border-color: #335b97;
+            box-shadow: var(--ring);
+        }
+
+        body.dark .select.combo .select-caret-btn svg {
+            stroke: var(--ink);
+        }
+
+        body.dark .select.combo .select-list {
+            min-width: 100%;
+            background: #0f1b31;
+            border-color: var(--line);
+        }
+
+        /* Toolbar container and app shell */
+        body.dark .app {
+            color: var(--ink);
+        }
+
+        body.dark #invoice-container {
+            /* grid holder */
+        }
+
+        /* Hints / minor text */
+        body.dark .hint {
+            color: var(--muted);
+        }
+
+        /* Generic tables (if any in UI) */
+        body.dark table {
+            color: var(--ink);
+        }
+
+        body.dark th,
+        body.dark td {
+            border-color: var(--line);
+        }
+
+        /* Scrollbars (WebKit) — optional polish */
+        body.dark *::-webkit-scrollbar {
+            height: 10px;
+            width: 10px;
+        }
+
+        body.dark *::-webkit-scrollbar-thumb {
+            background: #223456;
+            border-radius: 8px;
+        }
+
+        body.dark *::-webkit-scrollbar-thumb:hover {
+            background: #2a3e68;
+        }
+
+        .dark-toggle-fixed {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            z-index: 9999;
+            box-shadow: var(--shadow);
+        }
+
+        body.dark .dark-toggle-fixed {
+            background: var(--card);
+        }
+
+
+
+
         @media (max-width: 900px) {
             .col-6 {
                 grid-column: span 12
@@ -370,6 +639,15 @@
     <div class="app">
         <div class="brand">
             <h1 class="heading">SNA TRANSPORT INC.</h1>
+            <button class="icon-btn dark-toggle-fixed" id="darkModeToggle" aria-label="Toggle dark mode"
+                title="Toggle dark mode">
+                <!-- Moon (default icon) -->
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                    stroke-linejoin="round" aria-hidden="true">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z" />
+                </svg>
+            </button>
+
         </div>
         <p class="subhead">Invoicing</p>
         <hr class="divider" />
@@ -430,44 +708,46 @@
             const wrap = document.createElement('div');
             wrap.className = 'field col-3';
             wrap.innerHTML = `
-        <label>Driver</label>
-        <div class="select" data-value="">
-          <button type="button" class="select-trigger" aria-haspopup="listbox" aria-expanded="false">
-            <span class="select-label">Select Driver</span>
-            <svg class="select-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-          </button>
-          <div class="select-list" role="listbox">
-            <div class="option" data-value="Kuljeet" role="option" tabindex="0">
-              <div class="opt-icon">K</div><span>Kuljeet</span>
-            </div>
-            <div class="option" data-value="Harpreet" role="option" tabindex="0">
-              <div class="opt-icon">H</div><span>Harpreet</span>
-            </div>
-          </div>
+    <label>Driver</label>
+    <div class="select driver-select" data-value="">  <!-- 👈 add driver-select -->
+      <button type="button" class="select-trigger" aria-haspopup="listbox" aria-expanded="false">
+        <span class="select-label">Select Driver</span>
+        <svg class="select-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="select-list" role="listbox">
+        <div class="option" data-value="Kuljeet" role="option" tabindex="0">
+          <div class="opt-icon">K</div><span>Kuljeet</span>
         </div>
-      `;
+        <div class="option" data-value="Harpreet" role="option" tabindex="0">
+          <div class="opt-icon">H</div><span>Harpreet</span>
+        </div>
+      </div>
+    </div>
+  `;
             return wrap;
         }
 
+
         function getSelectedDriver(row) {
-            return row.querySelector('.select')?.dataset.value || '';
+            return row.querySelector('.driver-select')?.dataset.value || '';
         }
         function setSelectedDriver(row, value) {
-            const sel = row.querySelector('.select');
+            const sel = row.querySelector('.driver-select');
             if (!sel) return;
             sel.dataset.value = value || '';
             sel.querySelector('.select-label').textContent = value || 'Select Driver';
         }
-
         function attachSelectBehavior(row) {
-            const sel = row.querySelector('.select');
+            const sel = row.querySelector('.driver-select');          // 👈 was '.select'
+            if (!sel) return;
             const trig = sel.querySelector('.select-trigger');
             const list = sel.querySelector('.select-list');
 
             const closeAll = () => {
-                for (const open of document.querySelectorAll('.select.open')) {
+                for (const open of document.querySelectorAll('.driver-select.open')) { // 👈 limit to driver selects
                     open.classList.remove('open');
-                    open.querySelector('.select-trigger').setAttribute('aria-expanded', 'false');
+                    const btn = open.querySelector('.select-trigger');
+                    if (btn) btn.setAttribute('aria-expanded', 'false');
                 }
             };
 
@@ -478,10 +758,10 @@
                 if (!isOpen) {
                     sel.classList.add('open');
                     trig.setAttribute('aria-expanded', 'true');
-                    // Position safety (if near bottom, drop up)
                     const rect = list.getBoundingClientRect();
                     const spaceBelow = window.innerHeight - rect.top;
                     if (spaceBelow < 180) { list.style.top = 'auto'; list.style.bottom = 'calc(100% + 6px)'; }
+                    else { list.style.top = 'calc(100% + 6px)'; list.style.bottom = 'auto'; }
                 }
             });
 
@@ -489,14 +769,16 @@
                 opt.addEventListener('click', () => {
                     setSelectedDriver(row, opt.dataset.value);
                     closeAll();
-                    // Truck binding
                     const truckInput = row.querySelector('.truck');
-                    truckInput.value = opt.dataset.value === 'Kuljeet' ? '702' : opt.dataset.value === 'Harpreet' ? '47' : '';
+                    truckInput.value = opt.dataset.value === 'Kuljeet' ? '702'
+                        : opt.dataset.value === 'Harpreet' ? '47'
+                            : '';
                 });
             });
 
             document.addEventListener('click', closeAll);
         }
+
 
         /* ---------- Fields helpers ---------- */
         function newField({ label, placeholder, type = 'text', className = '', attrs = {} }) {
@@ -527,6 +809,134 @@
             return btn;
         }
 
+        const darkToggle = document.getElementById('darkModeToggle');
+
+        const moonIcon = `
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/>
+</svg>`;
+
+        const sunIcon = `
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="5"></circle>
+  <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
+</svg>`;
+
+        // Toggle + persist
+        function setDarkMode(on) {
+            if (on) {
+                document.body.classList.add('dark');
+                localStorage.setItem('darkMode', '1');
+                darkToggle.innerHTML = sunIcon;
+            } else {
+                document.body.classList.remove('dark');
+                localStorage.setItem('darkMode', '0');
+                darkToggle.innerHTML = moonIcon;
+            }
+        }
+
+        // Load preference and set icon
+        setDarkMode(localStorage.getItem('darkMode') === '1');
+
+        // Click + keyboard
+        darkToggle.addEventListener('click', () => {
+            setDarkMode(!document.body.classList.contains('dark'));
+        });
+        darkToggle.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); darkToggle.click(); }
+        });
+
+
+
+        /* ---------- Broker: input-first with dropdown suggestions ---------- */
+        function createBrokerChooser() {
+            const wrap = document.createElement('div');
+            wrap.className = 'field col-4';
+            wrap.innerHTML = `
+    <label>Bill To</label>
+    <div class="select combo" data-value="">
+      <input type="text" class="select-input broker-input" placeholder="Enter Broker Name" autocomplete="off" />
+      <button type="button" class="select-caret-btn" aria-haspopup="listbox" aria-expanded="false" aria-label="Open broker list">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 9l6 6 6-6"/>
+        </svg>
+      </button>
+      <div class="select-list" role="listbox">
+        <div class="option" data-value="Roadly Logistics" role="option" tabindex="0">
+          <div class="opt-icon">R</div><span>Roadly Logistics</span>
+        </div>
+        <div class="option" data-value="Spider Logistics" role="option" tabindex="0">
+          <div class="opt-icon">S</div><span>Spider Logistics</span>
+        </div>
+      </div>
+    </div>
+  `;
+            return wrap;
+        }
+
+        function getBrokerName(row) {
+            return row.querySelector('.broker-input')?.value?.trim() || '';
+        }
+
+        function setBrokerName(row, value) {
+            const input = row.querySelector('.broker-input');
+            if (input) input.value = value || '';
+        }
+
+        function attachBrokerBehavior(row) {
+            const sel = row.querySelector('.select.combo');
+            if (!sel) return;
+
+            const caretBtn = sel.querySelector('.select-caret-btn');
+            const list = sel.querySelector('.select-list');
+            const input = sel.querySelector('.broker-input');
+
+            const closeAll = () => {
+                document.querySelectorAll('.select.open').forEach(el => {
+                    el.classList.remove('open');
+                    const btn = el.querySelector('.select-caret-btn,.select-trigger');
+                    if (btn) btn.setAttribute('aria-expanded', 'false');
+                });
+            };
+
+            // Toggle dropdown from caret
+            caretBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isOpen = sel.classList.contains('open');
+                closeAll();
+                if (!isOpen) {
+                    sel.classList.add('open');
+                    caretBtn.setAttribute('aria-expanded', 'true');
+                    // drop-up if near bottom
+                    const rect = list.getBoundingClientRect();
+                    const spaceBelow = window.innerHeight - rect.top;
+                    if (spaceBelow < 180) { list.style.top = 'auto'; list.style.bottom = 'calc(100% + 6px)'; }
+                    else { list.style.top = 'calc(100% + 6px)'; list.style.bottom = 'auto'; }
+                }
+            });
+
+            // Pick from list -> fill input
+            list.querySelectorAll('.option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    input.value = opt.dataset.value || '';
+                    closeAll();
+                });
+            });
+
+            // Optional: close on outside click
+            document.addEventListener('click', closeAll);
+
+            // Optional: Enter selects first visible match
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowDown') {
+                    sel.classList.add('open');
+                    caretBtn.setAttribute('aria-expanded', 'true');
+                }
+            });
+        }
+
+
+
         /* ---------- Row lifecycle ---------- */
         function addInvoiceRow(prefill = {}) {
             const row = document.createElement('div');
@@ -534,7 +944,7 @@
 
             // Fields (precise, repeatable alignment)
             const load = newField({ label: 'Load #', placeholder: 'e.g. 12345', className: 'col-3', attrs: { class: 'load', autocomplete: 'off' } });
-            const bill = newField({ label: 'Bill To', placeholder: 'Broker / Company', className: 'col-4', attrs: { class: 'bill', autocomplete: 'off' } });
+            const billWrap = createBrokerChooser();
             const rate = newField({ label: 'Amount ($)', placeholder: 'e.g. 650', type: 'number', className: 'col-2', attrs: { class: 'rate', step: '0.01', min: '0' } });
             const driverWrap = createDriverSelect(); // custom dropdown
             driverWrap.classList.add('col-3');
@@ -551,7 +961,10 @@
             actions.append(previewBtn, duplicateBtn, removeBtn);
 
             // Append
-            row.append(load, bill, rate, driverWrap, truck, invoice, date, actions);
+            row.append(load, billWrap, rate, driverWrap, truck, invoice, date, actions);
+            if (prefill.bill) { setBrokerName(row, prefill.bill); }
+            attachBrokerBehavior(row);
+
             invoiceContainer.appendChild(row);
 
             // Init values
@@ -617,7 +1030,7 @@
         function generateInvoicePDF(row, opts = { download: true }) {
             const pdf = new jsPDF();
 
-            const bill = row.querySelector('.bill').value || '';
+            const bill = getBrokerName(row) || '';
             const load = row.querySelector('.load').value || '';
             const rate = row.querySelector('.rate').value || '';
             const invoiceNo = row.querySelector('.invoice').value || '';
@@ -850,7 +1263,7 @@
             const amountText = formatCurrency(rate);
 
             pdf.autoTable({
-                startY: nextStartY,
+                startY: nextStartY + 2,
                 theme: 'plain',
                 margin: { left: 12, right: 12 },
                 styles: {
@@ -870,14 +1283,19 @@
                 head: [['Item', 'Load #', 'Description', 'Amount']],
                 body: [
                     ['Line Haul', load || '—', '', amountText],
-                    [{ content: '', colSpan: 2 }, 'Total', amountText]
+                    [
+                        { content: '', colSpan: 2, styles: { halign: 'right' } }, // empty first two
+                        { content: 'Total', styles: { halign: 'right', fontStyle: 'bold' } },
+                        { content: amountText, styles: { halign: 'right', fontStyle: 'bold' } }
+                    ]
                 ],
                 columnStyles: {
                     0: { cellWidth: 35, overflow: 'ellipsize' },
                     1: { cellWidth: 50, overflow: 'ellipsize' },
-                    2: { cellWidth: 73, overflow: 'linebreak' }, // allow wrapping if needed
+                    2: { cellWidth: 73, overflow: 'linebreak', halign: 'right' },
                     3: { cellWidth: 27, halign: 'right' }
                 },
+
                 // Bold total row text
                 didParseCell: (data) => {
                     if (data.section === 'body' && data.row.index === 1) {
