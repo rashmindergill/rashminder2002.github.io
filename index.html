@@ -1028,7 +1028,17 @@
         }
 
         function generateInvoicePDF(row, opts = { download: true }) {
-            const pdf = new jsPDF();
+const pdf = new jsPDF('p', 'mm', 'letter'); // portrait, millimeters, US Letter
+
+// Page & margins
+const PAGE_W = pdf.internal.pageSize.getWidth
+  ? pdf.internal.pageSize.getWidth()
+  : pdf.internal.pageSize.width;     // jsPDF v1/v2 compat
+
+const MARGIN_L = 12;                 // ← change this for left margin
+const MARGIN_R = 12;                 // ← change this for RIGHT margin
+const RIGHT_X  = PAGE_W - MARGIN_R;  // right edge inside margin
+
 
             const bill = getBrokerName(row) || '';
             const load = row.querySelector('.load').value || '';
@@ -1041,7 +1051,7 @@
             drawHeader(pdf);
 
             // Title + right meta block for alignment clarity
-            pdf.setFont('helvetica', 'light'); pdf.setFontSize(30); pdf.setTextColor(90); pdf.text('INVOICE', 155, 20);
+            pdf.setFont('helvetica', 'light'); pdf.setFontSize(30); pdf.setTextColor(95); pdf.text('INVOICE', 158, 20);
 
             pdf.setTextColor(0);
             pdf.setFont('helvetica', 'bold'); pdf.setFontSize(11.5);
@@ -1050,12 +1060,12 @@
             // Label
             pdf.setFont('helvetica', 'bold');
             const dateLabel = 'Date:';
-            pdf.text(dateLabel, 200 - 36, 40, { align: 'right' });
+            pdf.text(dateLabel, 200 - 32, 41, { align: 'right' });
 
             // Date value
             pdf.setFont('helvetica', 'normal');
             const dateText = date || '-';
-            pdf.text(dateText, 200 - 24, 40, { align: 'right' });
+            pdf.text(dateText, 200 - 20, 41, { align: 'right' });
 
             // Measure widths
             pdf.setFont('helvetica', 'bold');
@@ -1066,23 +1076,21 @@
 
             // Figure out X positions
             const padding = 2; // small gap after the date text
-            const lineEndXdate = pdf.internal.pageSize.width - 12; // keep your original right edge
-            const lineStartXdate = lineEndXdate - (valueWidth + labelWidthdate + padding) - 2;
+
 
             // Draw line under just the label + date text
-            pdf.line(lineStartXdate, 42, lineEndXdate, 42);
 
 
 
             // Bill To (outlined box, no fills)
             pdf.setDrawColor(210); pdf.setLineWidth(0.2);
             pdf.setFont('helvetica', 'bold');
-            pdf.text('Invoice #', 13, 40);
+            pdf.text('Invoice #', 13, 41);
 
             // Draw invoice number
             pdf.setFont('helvetica', 'normal');
             const invoiceText = invoiceNo || '-';
-            pdf.text(invoiceText, 33, 40);
+            pdf.text(invoiceText, 33, 41);
 
             // Measure total width of "Invoice #" label + gap + invoice number
             pdf.setFont('helvetica', 'bold');
@@ -1091,14 +1099,7 @@
             pdf.setFont('helvetica', 'normal');
             const numberWidth = pdf.getTextWidth(invoiceText);
 
-            // Starting X for the line
-            const lineStartX = 12;
-
-            // End X based on content width + some padding
-            const lineEndX = 33 + numberWidth + 2; // 2 is extra padding after the number
-
-            // Draw the dynamic line
-            pdf.line(lineStartX, 42, lineEndX, 42);
+            
 
 
             // Keep your exact table width math for centered small table
@@ -1233,7 +1234,7 @@
                 title: "Bill to:",
                 x: 13,   // <- your existing left X
                 y: startY,
-                w: 88,   // <- your existing width
+                w: 91,   // <- your existing width
                 pairs: [
                     [bill || "—"],
                 ]
@@ -1242,9 +1243,9 @@
             // RIGHT card (keep your exact X/W so width math is unchanged)
             const rightCard = drawKeyValueCard(pdf, {
                 title: "Driver / Equipment",
-                x: 108,  // <- your existing right card X
+                x: 110,  // <- your existing right card X
                 y: startY,
-                w: 88,   // <- your existing width
+                w: 91,   // <- your existing width
                 pairs: [
                     [`${driver || "—"} / ${truck || "—"}`]
                 ]
@@ -1265,7 +1266,8 @@
             pdf.autoTable({
                 startY: nextStartY + 2,
                 theme: 'plain',
-                margin: { left: 12, right: 12 },
+                  margin: { left: MARGIN_L, right: MARGIN_R }, // ← right width control here
+
                 styles: {
                     font: 'helvetica',
                     fontSize: 11.5,
@@ -1291,9 +1293,9 @@
                 ],
                 columnStyles: {
                     0: { cellWidth: 35, overflow: 'ellipsize' },
-                    1: { cellWidth: 50, overflow: 'ellipsize' },
-                    2: { cellWidth: 73, overflow: 'linebreak', halign: 'right' },
-                    3: { cellWidth: 27, halign: 'right' }
+                    1: { cellWidth: 51, overflow: 'ellipsize' },
+                    2: { cellWidth: 75, overflow: 'linebreak', halign: 'right' },
+                    3: { cellWidth: 28.5, halign: 'right' }
                 },
 
                 // Bold total row text
@@ -1341,9 +1343,9 @@
 
 
             // Footer
-            pdf.line(12, 280, pdf.internal.pageSize.width - 12, 280); // Footer line
+            pdf.line(12, 265, pdf.internal.pageSize.width - 12, 265); // Footer line
             pdf.setFontSize(9.5); pdf.setTextColor(100);
-            pdf.text('Thank you for your business! Please remit payment to SNA TRANSPORT INC. - MC 873145', 33, 285);
+            pdf.text('Thank you for your business! Please remit payment to SNA TRANSPORT INC. (MC 873145)', 36, 270);
 
             if (opts.download) {
                 const safeLoad = (load || 'N-A').toString().replace(/[^\w\- ]+/g, '');
