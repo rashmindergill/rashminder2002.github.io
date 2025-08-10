@@ -1,137 +1,417 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SNA Invoicing</title>
     <style>
+        :root {
+            /* Apple-ish neutrals & rhythm */
+            --ink: #111;
+            --muted: #6a6a6a;
+            --line: #e8e8e8;
+            --bg: #fbfbfc;
+            --card: #fff;
+            --radius: 16px;
+            --shadow: 0 8px 24px rgba(0, 0, 0, .06);
+            --pad: 12px;
+            --ring: 0 0 0 4px rgba(0, 0, 0, .06);
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        html,
         body {
-            font-family: Arial, sans-serif;
+            height: 100%
+        }
+
+        body {
+            font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", Segoe UI, Roboto, Arial;
             margin: 0 auto;
-            padding: 10px;
-            color: #333;
+            padding: 16px;
+            color: var(--ink);
+            background: var(--bg);
             max-width: 100%;
-            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
-        h1 {
+
+        .app {
+            width: 96%;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 4px 0 2px;
+        }
+
+        .brand .logo {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            border: 1px solid var(--line);
+            background: linear-gradient(#fff, #f7f7f7);
+            box-shadow: var(--shadow);
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+            letter-spacing: .3px;
+        }
+
+        h1.heading {
+            margin: 0;
+            font-size: 26px;
+            letter-spacing: .2px;
+            font-weight: 800;
+        }
+
+        .subhead {
+            margin: 4px 0 14px;
             text-align: center;
-            margin-bottom: 10px;
-            font-size: 24px;
-            color: #444;
+            color: var(--muted);
+            font-size: 14px;
         }
-        h3 {
-            text-align: center;
-            margin-top: 5px;
-            margin-bottom: 20px;
-            font-size: 16px;
-            color: #444;
+
+        .divider {
+            height: 1px;
+            border: 0;
+            background: linear-gradient(90deg, transparent, #00000022, transparent);
+            margin: 10px 0 14px;
         }
-        .button-container {
+
+        /* Toolbar */
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 10px auto 16px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: var(--card);
+            color: var(--ink);
+            font-weight: 700;
+            font-size: 14px;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: transform .05s ease, box-shadow .15s ease, background .15s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px)
+        }
+
+        .btn:active {
+            transform: translateY(0)
+        }
+
+        .btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Container */
+        #invoice-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin: 0 auto 10px;
+            width: 100%;
+            overflow: visible;
+            /* ensure popovers not clipped */
+        }
+
+        /* Row Card: 12-col grid for super alignment */
+        .invoice-row {
+            position: relative;
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            padding: 14px;
+            box-shadow: var(--shadow);
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 10px 12px;
+            align-items: end;
+            width: 100%;
+            overflow: visible;
+            /* important for dropdown */
+        }
+
+        /* Fields */
+        .field {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            margin-top: 20px;
-            align-items: center;
+            gap: 6px;
         }
-        button {
-            padding: 12px 24px;
-            border: 1px solid #aaa;
-            background-color: #f9f9f9;
-            color: #333;
-            cursor: pointer;
-            border-radius: 4px;
-            font-size: 16px;
+
+        .field label {
+            font-size: 11.5px;
+            font-weight: 800;
+            color: #3f3f3f;
+            letter-spacing: .3px;
+            text-transform: uppercase;
+        }
+
+        input {
+            padding: 11px 12px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: #fff;
+            color: var(--ink);
+            font-size: 15px;
+            outline: none;
+            transition: border-color .15s ease, box-shadow .15s ease;
+        }
+
+        input:focus {
+            border-color: #d0d0d0;
+            box-shadow: var(--ring);
+        }
+
+        /* Custom Select (Driver) to avoid clipping */
+        .select {
+            position: relative;
+            user-select: none;
+        }
+
+        .select-trigger {
             width: 100%;
-            max-width: 200px;
-        }
-        button:hover {
-            background-color: #ddd;
-        }
-        input, select {
-            padding: 10px;
-            margin: 5px 0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 16px;
-            width: 100%;
-            max-width: 300px;
-        }
-        .invoice-row {
             display: flex;
-            flex-wrap: wrap;
             align-items: center;
-            gap: 7px;
-            margin-bottom: 15px;
-            width: 100%;
-            box-sizing: border-box;
+            justify-content: space-between;
+            padding: 11px 12px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: #fff;
+            font-size: 15px;
+            cursor: pointer;
+            transition: border-color .15s ease, box-shadow .15s ease;
         }
-        .invoice-row button {
-            padding: 8px 16px;
-            font-size: 14px;
-            border-radius: 4px;
-            width: 100%;
-            max-width: 120px;
+
+        .select-trigger:focus {
+            outline: none;
+            border-color: #d0d0d0;
+            box-shadow: var(--ring);
         }
-        .remove-row {
-            background-color: #e74c3c;
-            color: white;
+
+        .select-caret {
+            width: 16px;
+            height: 16px;
         }
-        .remove-row:hover {
-            background-color: #c0392b;
+
+        .select-list {
+            position: absolute;
+            left: 0;
+            right: auto;
+            top: calc(100% + 6px);
+            min-width: 220px;
+            max-width: 280px;
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, .12);
+            padding: 6px;
+            z-index: 9999;
+            display: none;
         }
-        .clear-all {
-            background-color: #f39c12;
-            color: white;
+
+        .select.open .select-list {
+            display: block;
         }
-        .clear-all:hover {
-            background-color: #e67e22;
+
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .option:hover {
+            background: #f6f6f6;
+        }
+
+        .opt-icon {
+            width: 18px;
+            height: 18px;
+            border: 1px solid var(--line);
+            border-radius: 5px;
+            display: grid;
+            place-items: center;
+            font-size: 11px;
+        }
+
+        /* Grid Spans */
+        .col-2 {
+            grid-column: span 2
+        }
+
+        .col-3 {
+            grid-column: span 3
+        }
+
+        .col-4 {
+            grid-column: span 4
+        }
+
+        .col-6 {
+            grid-column: span 6
+        }
+
+        .col-12 {
+            grid-column: span 12
+        }
+
+        /* Row actions (icon-only) */
+        .row-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            grid-column: span 12;
+            margin-top: 2px;
+        }
+
+        .icon-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: #fff;
+            cursor: pointer;
+            transition: transform .05s ease, background .15s ease;
+            box-shadow: none;
+        }
+
+        .icon-btn:hover {
+            background: #f6f6f6;
+            transform: translateY(-1px);
+        }
+
+        .icon-btn svg {
+            width: 18px;
+            height: 18px;
+            stroke: #333;
+        }
+
+        .hint {
+            text-align: center;
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 6px;
+        }
+
+        @media (max-width: 900px) {
+            .col-6 {
+                grid-column: span 12
+            }
+
+            .col-4 {
+                grid-column: span 6
+            }
+
+            .col-3 {
+                grid-column: span 6
+            }
+
+            .col-2 {
+                grid-column: span 6
+            }
         }
 
         @media (max-width: 600px) {
-            h1 {
-                font-size: 20px;
+            h1.heading {
+                font-size: 22px
             }
-            h3 {
+
+            .subhead {
+                font-size: 13px
+            }
+
+            .btn {
+                font-size: 13px;
+                padding: 10px 14px
+            }
+
+            input {
                 font-size: 14px;
+                padding: 10px
             }
-            button {
-                font-size: 14px;
-                padding: 10px;
-            }
-            input, select {
-                font-size: 14px;
-                padding: 8px;
-            }
+
             .invoice-row {
-                flex-direction: column;
-                align-items: stretch;
+                gap: 8px 10px
             }
         }
     </style>
 </head>
+
 <body>
+    <div class="app">
+        <div class="brand">
+            <h1 class="heading">SNA TRANSPORT INC.</h1>
+        </div>
+        <p class="subhead">Invoicing</p>
+        <hr class="divider" />
 
-    <h1>SNA Transport</h1>
-    <h3>Invoice Generator</h3>
-    <hr style="border: 1px solid #0000003c; width: 100%; margin: 20px auto;">
+        <div id="invoice-container"></div>
 
+        <div class="toolbar" role="toolbar" aria-label="invoice actions">
+            <button class="btn add-row" aria-label="Add invoice">
+                <!-- Plus icon -->
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                    stroke-linejoin="round" aria-hidden="true">
+                    <path d="M12 5v14M5 12h14" />
+                </svg>
+                Add Invoice
+            </button>
+            <button class="btn clear-all" aria-label="Clear all invoices">
+                <!-- Eraser icon -->
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                    stroke-linejoin="round" aria-hidden="true">
+                    <path d="M3 17l7-7 11 11H7z" />
+                    <path d="M14 3l7 7" />
+                </svg>
+                Clear All
+            </button>
+            <button class="btn generate" id="generate-invoices" aria-label="Generate invoices">
+                <!-- Paper icon -->
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                    stroke-linejoin="round" aria-hidden="true">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <path d="M14 2v6h6" />
+                </svg>
+                Generate Invoice
+            </button>
+        </div>
 
-    <div style="margin: 10px auto; width: 95%; text-align: center;" id="invoice-container">
-        <!-- Invoice rows will be dynamically added here -->
+        <p class="hint">SNA TRANSPORT INC. • MC 873145 • DOT 2516418</p>
     </div>
 
-
-    <div class="button-container">
-        <button class="add-row">Add Invoice</button>
-        <button class="clear-all">Clear All</button>
-        <button id="generate-invoices">Generate Invoice(s)</button>
-    </div>
-
-    <script 
-        src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js" 
-        integrity="sha256-vIL0pZJsOKSz76KKVCyLxzkOT00vXs+Qz4fYRVMoDhw=" 
-        crossorigin="anonymous">
-    </script>
+    <!-- jsPDF + AutoTable -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"
+        integrity="sha256-vIL0pZJsOKSz76KKVCyLxzkOT00vXs+Qz4fYRVMoDhw=" crossorigin="anonymous">
+        </script>
     <script src="https://unpkg.com/jspdf-autotable@3.5.22/dist/jspdf.plugin.autotable.js"></script>
 
     <script>
@@ -140,172 +420,381 @@
         const clearAllButton = document.querySelector('.clear-all');
         const generateInvoicesButton = document.getElementById('generate-invoices');
 
-        function addInvoiceRow() {
+        function formatCurrency(val) {
+            const num = Number(val || 0);
+            return isFinite(num) ? `$${num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '$0.00';
+        }
+
+        /* ---------- Custom Select (Driver) ---------- */
+        function createDriverSelect() {
+            const wrap = document.createElement('div');
+            wrap.className = 'field col-3';
+            wrap.innerHTML = `
+        <label>Driver</label>
+        <div class="select" data-value="">
+          <button type="button" class="select-trigger" aria-haspopup="listbox" aria-expanded="false">
+            <span class="select-label">Select Driver</span>
+            <svg class="select-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="select-list" role="listbox">
+            <div class="option" data-value="Kuljeet" role="option" tabindex="0">
+              <div class="opt-icon">K</div><span>Kuljeet</span>
+            </div>
+            <div class="option" data-value="Harpreet" role="option" tabindex="0">
+              <div class="opt-icon">H</div><span>Harpreet</span>
+            </div>
+          </div>
+        </div>
+      `;
+            return wrap;
+        }
+
+        function getSelectedDriver(row) {
+            return row.querySelector('.select')?.dataset.value || '';
+        }
+        function setSelectedDriver(row, value) {
+            const sel = row.querySelector('.select');
+            if (!sel) return;
+            sel.dataset.value = value || '';
+            sel.querySelector('.select-label').textContent = value || 'Select Driver';
+        }
+
+        function attachSelectBehavior(row) {
+            const sel = row.querySelector('.select');
+            const trig = sel.querySelector('.select-trigger');
+            const list = sel.querySelector('.select-list');
+
+            const closeAll = () => {
+                for (const open of document.querySelectorAll('.select.open')) {
+                    open.classList.remove('open');
+                    open.querySelector('.select-trigger').setAttribute('aria-expanded', 'false');
+                }
+            };
+
+            trig.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isOpen = sel.classList.contains('open');
+                closeAll();
+                if (!isOpen) {
+                    sel.classList.add('open');
+                    trig.setAttribute('aria-expanded', 'true');
+                    // Position safety (if near bottom, drop up)
+                    const rect = list.getBoundingClientRect();
+                    const spaceBelow = window.innerHeight - rect.top;
+                    if (spaceBelow < 180) { list.style.top = 'auto'; list.style.bottom = 'calc(100% + 6px)'; }
+                }
+            });
+
+            list.querySelectorAll('.option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    setSelectedDriver(row, opt.dataset.value);
+                    closeAll();
+                    // Truck binding
+                    const truckInput = row.querySelector('.truck');
+                    truckInput.value = opt.dataset.value === 'Kuljeet' ? '702' : opt.dataset.value === 'Harpreet' ? '47' : '';
+                });
+            });
+
+            document.addEventListener('click', closeAll);
+        }
+
+        /* ---------- Fields helpers ---------- */
+        function newField({ label, placeholder, type = 'text', className = '', attrs = {} }) {
+            const wrap = document.createElement('div');
+            wrap.className = `field ${className}`;
+            const id = 'f_' + Math.random().toString(36).slice(2);
+            const isDate = type === 'date';
+            wrap.innerHTML = `
+        <label for="${id}">${label}</label>
+        <input id="${id}" type="${type}" placeholder="${placeholder}" ${isDate ? 'inputmode=none' : ''}/>
+      `;
+            const input = wrap.querySelector('input');
+            Object.entries(attrs).forEach(([k, v]) => input.setAttribute(k, v));
+            return wrap;
+        }
+
+        function createIconButton(title, pathD, onClick) {
+            const btn = document.createElement('button');
+            btn.className = 'icon-btn';
+            btn.type = 'button';
+            btn.title = title;
+            btn.setAttribute('aria-label', title);
+            btn.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="${pathD}"/>
+        </svg>`;
+            btn.addEventListener('click', onClick);
+            return btn;
+        }
+
+        /* ---------- Row lifecycle ---------- */
+        function addInvoiceRow(prefill = {}) {
             const row = document.createElement('div');
             row.classList.add('invoice-row');
-            row.innerHTML = `
-                <input type="text" class="load" placeholder="Load Number" />
-                <input type="text" class="bill" placeholder="Bill to" />
-                <input type="number" class="rate" placeholder="Load Amount" />
-                <select class="driver">
-                    <option value="" disabled selected>Select Driver</option>
-                    <option value="Kuljeet">Kuljeet</option>
-                    <option value="Harpreet">Harpreet</option>
-                </select>
-                <input type="text" class="truck" placeholder="Truck Number" />
-                <input type="text" class="invoice" placeholder="Invoice Number" readonly />
-                <input type="date" class="date" />
-                <button class="remove-row">Remove</button>
-                <hr style="border: 1px solid #0000001c; width: 100%; margin: 1px auto;">
-            `;
 
-            // Synchronize fields and handle driver selection
-            const dateInput = row.querySelector('.date');
+            // Fields (precise, repeatable alignment)
+            const load = newField({ label: 'Load #', placeholder: 'e.g. 12345', className: 'col-3', attrs: { class: 'load', autocomplete: 'off' } });
+            const bill = newField({ label: 'Bill To', placeholder: 'Broker / Company', className: 'col-4', attrs: { class: 'bill', autocomplete: 'off' } });
+            const rate = newField({ label: 'Amount ($)', placeholder: 'e.g. 650', type: 'number', className: 'col-2', attrs: { class: 'rate', step: '0.01', min: '0' } });
+            const driverWrap = createDriverSelect(); // custom dropdown
+            driverWrap.classList.add('col-3');
+            const truck = newField({ label: 'Truck #', placeholder: 'Auto from Driver', className: 'col-2', attrs: { class: 'truck' } });
+            const invoice = newField({ label: 'Invoice #', placeholder: 'Auto from Load #', className: 'col-3', attrs: { class: 'invoice' } });
+            const date = newField({ label: 'Date', placeholder: '', type: 'date', className: 'col-3', attrs: { class: 'date' } });
+
+            // Actions (Preview / Duplicate / Delete)
+            const actions = document.createElement('div');
+            actions.className = 'row-actions';
+            const previewBtn = createIconButton('Preview PDF', 'M4 4h16v16H4z M8 8h8v8H8z', () => generateInvoicePDF(row, { download: false }));
+            const duplicateBtn = createIconButton('Duplicate row', 'M16 3H6a2 2 0 0 0-2 2v10M8 7h10a2 2 0 0 1 2 2v10M8 7v10a2 2 0 0 0 2 2h10', () => duplicateRow(row));
+            const removeBtn = createIconButton('Remove row', 'M3 6h18M8 6v14a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V6M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2', () => row.remove());
+            actions.append(previewBtn, duplicateBtn, removeBtn);
+
+            // Append
+            row.append(load, bill, rate, driverWrap, truck, invoice, date, actions);
+            invoiceContainer.appendChild(row);
+
+            // Init values
+            const dateInput = row.querySelector('.date'); dateInput.value = new Date().toISOString().split('T')[0];
+            if (prefill.load) { row.querySelector('.load').value = prefill.load; }
+            if (prefill.bill) { row.querySelector('.bill').value = prefill.bill; }
+            if (prefill.rate) { row.querySelector('.rate').value = prefill.rate; }
+            if (prefill.truck) { row.querySelector('.truck').value = prefill.truck; }
+            if (prefill.invoice) { row.querySelector('.invoice').value = prefill.invoice; }
+            if (prefill.date) { row.querySelector('.date').value = prefill.date; }
+            if (prefill.driver) { setSelectedDriver(row, prefill.driver); }
+
+            // Bind behaviors
             const loadInput = row.querySelector('.load');
             const invoiceInput = row.querySelector('.invoice');
-            const driverDropdown = row.querySelector('.driver');
-            const truckInput = row.querySelector('.truck');
+            loadInput.addEventListener('input', () => { invoiceInput.value = loadInput.value || ''; });
+            invoiceInput.value = loadInput.value || '';
 
-            dateInput.value = new Date().toISOString().split('T')[0];
+            attachSelectBehavior(row);
 
-            // Auto-fill invoice number based on load number
-            loadInput.addEventListener('input', () => {
-                invoiceInput.value = `${loadInput.value}`;
-            });
-
-            driverDropdown.addEventListener('change', () => {
-                truckInput.value = driverDropdown.value === "Kuljeet" ? "702" : driverDropdown.value === "Harpreet" ? "47" : "";
-            });
-
-            // Remove functionality
-            row.querySelector('.remove-row').addEventListener('click', () => row.remove());
-            invoiceContainer.appendChild(row);
+            return row;
         }
 
-        function clearAllRows() {
-            invoiceContainer.innerHTML = '';
+        function duplicateRow(row) {
+            const cloneData = {
+                load: row.querySelector('.load').value,
+                bill: row.querySelector('.bill').value,
+                rate: row.querySelector('.rate').value,
+                driver: getSelectedDriver(row),
+                truck: row.querySelector('.truck').value,
+                invoice: row.querySelector('.invoice').value,
+                date: row.querySelector('.date').value,
+            };
+            const newRow = addInvoiceRow(cloneData);
+            newRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
-        function generateInvoicePDF(row) {
-    const pdf = new jsPDF();
-    
-    const bill = row.querySelector('.bill').value;
-    const load = row.querySelector('.load').value;
-    const rate = row.querySelector('.rate').value;
-    const invoice = row.querySelector('.invoice').value;
-    const date = row.querySelector('.date').value;
-    const driver = row.querySelector('.driver').value;
-    const truck = row.querySelector('.truck').value;
+        function clearAllRows() { invoiceContainer.innerHTML = ''; }
 
-    pdf.setFontSize(10.5);
+        /* ---------- PDF (grayscale, precise, print-first) ---------- */
+        function drawHeader(pdf) {
+            pdf.setTextColor(0, 0, 0);
+            pdf.setFont('helvetica', 'bold'); pdf.setFontSize(18);
+            pdf.text('SNA TRANSPORT INC.', 12, 14);
 
-    // Company Information
-    pdf.text(10, 15, 'SNA TRANSPORT INC.');
-    pdf.text(10, 20, '8100 Vegas Cir, West Chester, OH 45069');
-    pdf.text(10, 25, 'Email: snatransport12@gmail.com');
-    pdf.text(10, 30, 'Phone: (513) 462-5849');
+            pdf.setFont('helvetica', 'normal'); pdf.setFontSize(11.5);
+            pdf.text('8100 Vegas Cir, West Chester, OH 45069', 12, 20);
+            pdf.text('snatransport12@gmail.com  •  (513) 462-5849', 12, 25);
 
-    // Invoice Info
-    pdf.text(`Invoice #: ${invoice}`, 170, 15, { align: 'right' });
-    pdf.text(`Date: ${date}`, 170, 20, { align: 'right' });
-    pdf.text(`Bill to: ${bill}`, 150, 35, 'center');
+            pdf.setDrawColor(190); pdf.setLineWidth(0.2);
+            pdf.line(12, 28, pdf.internal.pageSize.width - 12, 28);
+        }
 
-    // Center Table Margin Setup
-    const wantedTableWidth = 110;
-    const pageWidth = pdf.internal.pageSize.width;
-    const margin = (pageWidth - wantedTableWidth) / 2;
+        function generateInvoicePDF(row, opts = { download: true }) {
+            const pdf = new jsPDF();
 
-    // Driver and Truck Info Table
-    pdf.autoTable({
-        startY: 50,
-        theme: 'grid',
-        margin: { left: margin, right: margin },
-        styles: { fillColor: [0, 0, 0], align: 'center' },
-        columnStyles: {
-            0: { halign: 'left', cellWidth: 55, fillColor: [255, 255, 255] },
-            1: { halign: 'left', cellWidth: 55, fillColor: [255, 255, 255] }
-        },
-        color: 'black',
-        head: [['Driver', 'Truck']],
-        body: [[driver, truck]]
-    });
+            const bill = row.querySelector('.bill').value || '';
+            const load = row.querySelector('.load').value || '';
+            const rate = row.querySelector('.rate').value || '';
+            const invoiceNo = row.querySelector('.invoice').value || '';
+            const date = row.querySelector('.date').value || '';
+            const driver = getSelectedDriver(row) || '';
+            const truck = row.querySelector('.truck').value || '';
 
-    // Load Info Table
-    pdf.autoTable({
-        startY: 70,
-        theme: 'grid',
-        styles: { fillColor: [0, 0, 0], halign: 'center' },
-        columnStyles: {
-            0: { halign: 'left', cellWidth: 20, fillColor: [255, 255, 255] },
-            1: { halign: 'left', cellWidth: 70, fillColor: [255, 255, 255] },
-            2: { halign: 'left', cellWidth: 65, fillColor: [255, 255, 255] },
-            3: { halign: 'left', cellWidth: 25, fillColor: [255, 255, 255] }
-        },
-        fillColor: 'black',
-        head: [['Item', 'Load #', 'Description', 'Amount']],
-        body: [
-            ['Line Haul', `${load}`, '', `$${rate}`],
-            ['', '', 'Total', `$${rate}`]
-        ]
-    });
+            drawHeader(pdf);
 
-    // Save the PDF
-    pdf.save(`Load ${load} - SNA TRANSPORT - MC 873145.pdf`);
-}
+            // Title + right meta block for alignment clarity
+            pdf.setFont('helvetica', 'light'); pdf.setFontSize(30); pdf.setTextColor(90); pdf.text('INVOICE', 155, 20);
+
+            pdf.setTextColor(0);
+            pdf.setFont('helvetica', 'bold'); pdf.setFontSize(11.5);
+            pdf.text('Invoice #', 200 - 110, 39, { align: 'right' }); pdf.setFont('helvetica', 'normal');
+            pdf.text(invoiceNo || '-', 200 - 90, 39, { align: 'right' });
+            pdf.setFont('helvetica', 'bold'); pdf.text('Date:', 200 - 36, 39, { align: 'right' });
+            pdf.setFont('helvetica', 'normal'); pdf.text(date || '-', 200 - 24, 39, { align: 'right' });
+
+            // Bill To (outlined box, no fills)
+            pdf.setDrawColor(210); pdf.setLineWidth(0.2);
+            pdf.line(12, 46, pdf.internal.pageSize.width - 12, 46);
+            pdf.setFont('helvetica', 'bold'); pdf.text('Bill To:', 14, 39);
+            pdf.setFont('helvetica', 'normal'); pdf.text(bill || '-', 30, 39);
+
+            // Keep your exact table width math for centered small table
+            const wantedTableWidth = 110;
+            const pageWidth = pdf.internal.pageSize.width;
+            const margin = (pageWidth - wantedTableWidth) / 2;
+
+            // Shift table right by 20pt without changing its width
+            const shiftX = 17; // CHANGED: positive = move right
+
+            pdf.autoTable({
+                startY: 60,
+                theme: 'plain',
+                // CHANGED: increase left, decrease right equally -> same table width, shifted right
+                margin: { left: margin + shiftX, right: Math.max(0, margin - shiftX) },
+
+                styles: {
+                    font: 'helvetica',
+                    fontSize: 11.5,                       // smaller text
+                    textColor: [0, 0, 0],
+                    cellPadding: { top: 3, right: 6, bottom: 3, left: 6 }, // tight padding
+                    halign: 'left',
+                    valign: 'middle',
+                    lineWidth: 0                       // no default borders
+                },
+                headStyles: {
+                    fontStyle: 'bold',
+                    fillColor: [248, 248, 248],        // subtle header tint
+                    textColor: [0, 0, 0]
+                },
+                head: [['Driver', 'Truck']],
+                body: [[driver || '—', truck || '—']],
+                columnStyles: {
+                    0: { cellWidth: 48, overflow: 'ellipsize' },
+                    1: { cellWidth: 30, overflow: 'ellipsize' }
+                },
+                tableLineWidth: 0,                   // no outer box
+                tableLineColor: [255, 255, 255],
+
+                // Only draw a light bottom rule per row
+                didDrawCell: (data) => {
+                    const doc = data.doc;
+                    const isRowEnd = data.column.index === data.table.columns.length - 1;
+                    if (!isRowEnd) return;
+                    const y = data.cell.y + data.cell.height;
+
+                    if (data.section === 'head') {
+                        doc.setDrawColor(210); doc.setLineWidth(0.2);
+                        doc.line(data.table.startX, y, data.table.startX + data.table.width, y);
+                    } else if (data.section === 'body') {
+                        doc.setDrawColor(235); doc.setLineWidth(0.15);
+                        doc.line(data.table.startX, y, data.table.startX + data.table.width, y);
+                    }
+                }
+            });
 
 
-function generateInvoices() {
-    const rows = document.querySelectorAll('.invoice-row');
-    rows.forEach(row => {
-        generateInvoicePDF(row);
-    });
-}
 
+
+            // Line items (compact, Apple-ish)
+            const amountText = formatCurrency(rate);
+
+            pdf.autoTable({
+                startY: pdf.lastAutoTable.finalY + 10,
+                theme: 'plain',
+                margin: { left: 12, right: 12 },
+                styles: {
+                    font: 'helvetica',
+                    fontSize: 11.5,
+                    textColor: [0, 0, 0],
+                    cellPadding: { top: 3, right: 6, bottom: 3, left: 6 },
+                    halign: 'left',
+                    valign: 'middle',
+                    lineWidth: 0 // no default borders
+                },
+                headStyles: {
+                    fontStyle: 'bold',
+                    fillColor: [248, 248, 248],
+                    textColor: [0, 0, 0]
+                },
+                head: [['Item', 'Load #', 'Description', 'Amount']],
+                body: [
+                    ['Line Haul', load || '—', '', amountText],
+                    [{ content: '', colSpan: 2 }, 'Total', amountText]
+                ],
+                columnStyles: {
+                    0: { cellWidth: 35, overflow: 'ellipsize' },
+                    1: { cellWidth: 50, overflow: 'ellipsize' },
+                    2: { cellWidth: 73, overflow: 'linebreak' }, // allow wrapping if needed
+                    3: { cellWidth: 27, halign: 'right' }
+                },
+                // Bold total row text
+                didParseCell: (data) => {
+                    if (data.section === 'body' && data.row.index === 1) {
+                        data.cell.styles.fontStyle = 'bold';
+                    }
+                },
+                // Hairline separators; stronger rule above Total
+                didDrawCell: (data) => {
+                    const doc = data.doc;
+                    const atRowEnd = data.column.index === data.table.columns.length - 1;
+                    const startX = data.table.startX;
+                    const endX = startX + data.table.width;
+
+                    // header bottom rule
+                    if (data.section === 'head' && atRowEnd) {
+                        const y = data.cell.y + data.cell.height;
+                        doc.setDrawColor(255); doc.setLineWidth(0.2);
+                        doc.line(startX, y, endX, y);
+                        return;
+                    }
+
+                    if (data.section === 'body' && atRowEnd) {
+                        // detect the Total row robustly
+                        const isTotal =
+                            data.row.index === 1 ||                       // your current layout
+                            (Array.isArray(data.row.raw) && data.row.raw[1] === 'Total');
+
+                        if (isTotal) {
+                            // strong line ABOVE the total row
+                            const yTop = data.cell.y;
+                            doc.setDrawColor(190); doc.setLineWidth(0.3);
+                            doc.line(startX, yTop, endX, yTop);
+                        } else {
+                            // light row divider under normal rows
+                            const yBottom = data.cell.y + data.cell.height;
+                            doc.setDrawColor(235); doc.setLineWidth(0.15);
+                            doc.line(startX, yBottom, endX, yBottom);
+                        }
+                    }
+                }
+
+            });
+
+
+            // Footer
+            pdf.line(12, 275, pdf.internal.pageSize.width - 12, 275);
+            pdf.setFontSize(9.5); pdf.setTextColor(100);
+            pdf.text('Thank you for your business! Please remit payment to SNA TRANSPORT INC. - MC 873145', 33, 280);
+
+            if (opts.download) {
+                const safeLoad = (load || 'N-A').toString().replace(/[^\w\- ]+/g, '');
+                pdf.save(`Load ${safeLoad} - SNA TRANSPORT - MC 873145.pdf`);
+            } else {
+                const blob = pdf.output('blob'); const url = URL.createObjectURL(blob);
+                window.open(url, '_blank'); setTimeout(() => URL.revokeObjectURL(url), 10000);
+            }
+        }
+
+        function generateAllInvoices() {
             const rows = document.querySelectorAll('.invoice-row');
-            rows.forEach(row => {
-                const pdf = new jsPDF();
-                const bill = row.querySelector('.bill').value;
-                const load = row.querySelector('.load').value;
-                const rate = row.querySelector('.rate').value;
-                const invoice = row.querySelector('.invoice').value;
-                const date = row.querySelector('.date').value;
-                const driver = row.querySelector('.driver').value;
-                const truck = row.querySelector('.truck').value;
+            if (!rows.length) { alert('Add at least one invoice.'); return; }
+            rows.forEach(row => generateInvoicePDF(row, { download: true }));
+        }
 
-                pdf.setFontSize(12);
-                pdf.text("SNA TRANSPORT INC.", 10, 10);
-                pdf.text("8100 Vegas Cir, West Chester, OH 45069", 10, 20);
-                pdf.text("Email: snatransport12@gmail.com", 10, 30);
-                pdf.text("Phone: (513) 462-5849", 10, 40);
-                pdf.text(`Invoice #: ${invoice}`, 150, 10, { align: 'right' });
-                pdf.text(`Date: ${date}`, 150, 20, { align: 'right' });
-                pdf.text(`Bill to: ${bill}`, 10, 50);
-
-                pdf.autoTable({
-                    startY: 70,
-                    theme: 'plain',
-                    head: [['Driver', 'Truck']],
-                    body: [[driver, truck]],
-                });
-
-                pdf.autoTable({
-                    startY: 100,
-                    theme: 'plain',
-                    head: [['Item', 'Load #', 'Description', 'Amount']],
-                    body: [['Line Haul', load, '', `$${rate}`], ['', '', 'Total', `$${rate}`]],
-                });
-
-                pdf.save(`Load ${load} - Invoice.pdf`);
-            });
-
-        // Event Listeners
-        addRowButton.addEventListener('click', addInvoiceRow);
+        /* ---------- Events ---------- */
+        addRowButton.addEventListener('click', () => addInvoiceRow());
         clearAllButton.addEventListener('click', clearAllRows);
-        generateInvoicesButton.addEventListener('click', () => {
-            const rows = document.querySelectorAll('.invoice-row');
-            rows.forEach(generateInvoicePDF);
-        });
-    </script>
+        generateInvoicesButton.addEventListener('click', generateAllInvoices);
 
+        /* ---------- Start with one row ---------- */
+        addInvoiceRow();
+    </script>
 </body>
+
 </html>
