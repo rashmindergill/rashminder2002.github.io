@@ -592,17 +592,26 @@
         function clearAllRows() { invoiceContainer.innerHTML = ''; }
 
         /* ---------- PDF (grayscale, precise, print-first) ---------- */
+        const COMPANY_NAME = 'SNA TRANSPORT INC.';
+        const COMPANY_ADDRESS = '8100 Vegas Cir, West Chester, OH 45069';
+        const COMPANY_CONTACT = 'snatransport12@gmail.com  •  (513) 462-5849';
+
         function drawHeader(pdf) {
             pdf.setTextColor(0, 0, 0);
             pdf.setFont('helvetica', 'bold'); pdf.setFontSize(18);
-            pdf.text('SNA TRANSPORT INC.', 11.75, 14);
+            pdf.text(COMPANY_NAME, 11.75, 14);
 
             pdf.setFont('helvetica', 'normal'); pdf.setFontSize(11.5);
-            pdf.text('8100 Vegas Cir, West Chester, OH 45069', 12, 20);
-            pdf.text('snatransport12@gmail.com  •  (513) 462-5849', 12, 25);
+            pdf.text(COMPANY_ADDRESS, 12, 20);
+            pdf.text(COMPANY_CONTACT, 12, 25);
+
+            // Add a logo (replace 'logo.png' with your actual logo file)
+            // const img = new Image()
+            // img.src = 'logo.png'
+            // pdf.addImage(img, 'png', 170, 8, 30, 15)
 
             pdf.setDrawColor(190); pdf.setLineWidth(0.2);
-            pdf.line(12, 28, pdf.internal.pageSize.width - 12, 28);
+            pdf.line(0, 30, pdf.internal.pageSize.width, 30);
         }
 
         function generateInvoicePDF(row, opts = { download: true }) {
@@ -623,16 +632,61 @@
 
             pdf.setTextColor(0);
             pdf.setFont('helvetica', 'bold'); pdf.setFontSize(11.5);
-            pdf.text('Invoice #', 200 - 110, 39, { align: 'right' }); pdf.setFont('helvetica', 'normal');
-            pdf.text(invoiceNo || '-', 200 - 90, 39, { align: 'right' });
-            pdf.setFont('helvetica', 'bold'); pdf.text('Date:', 200 - 36, 39, { align: 'right' });
-            pdf.setFont('helvetica', 'normal'); pdf.text(date || '-', 200 - 24, 39, { align: 'right' });
+            pdf.setFontSize(11.5);
+
+            // Label
+            pdf.setFont('helvetica', 'bold');
+            const dateLabel = 'Date:';
+            pdf.text(dateLabel, 200 - 36, 40, { align: 'right' });
+
+            // Date value
+            pdf.setFont('helvetica', 'normal');
+            const dateText = date || '-';
+            pdf.text(dateText, 200 - 24, 40, { align: 'right' });
+
+            // Measure widths
+            pdf.setFont('helvetica', 'bold');
+            const labelWidthdate = pdf.getTextWidth(dateLabel);
+
+            pdf.setFont('helvetica', 'normal');
+            const valueWidth = pdf.getTextWidth(dateText);
+
+            // Figure out X positions
+            const padding = 2; // small gap after the date text
+            const lineEndXdate = pdf.internal.pageSize.width - 12; // keep your original right edge
+            const lineStartXdate = lineEndXdate - (valueWidth + labelWidthdate + padding) - 2;
+
+            // Draw line under just the label + date text
+            pdf.line(lineStartXdate, 42, lineEndXdate, 42);
+
+
 
             // Bill To (outlined box, no fills)
             pdf.setDrawColor(210); pdf.setLineWidth(0.2);
-            pdf.line(12, 46, pdf.internal.pageSize.width - 12, 46);
-            pdf.setFont('helvetica', 'bold'); pdf.text('Bill To:', 13, 39);
-            pdf.setFont('helvetica', 'normal'); pdf.text(bill || '-', 29, 39);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('Invoice #', 13, 40);
+
+            // Draw invoice number
+            pdf.setFont('helvetica', 'normal');
+            const invoiceText = invoiceNo || '-';
+            pdf.text(invoiceText, 33, 40);
+
+            // Measure total width of "Invoice #" label + gap + invoice number
+            pdf.setFont('helvetica', 'bold');
+            const labelWidth = pdf.getTextWidth('Invoice #');
+
+            pdf.setFont('helvetica', 'normal');
+            const numberWidth = pdf.getTextWidth(invoiceText);
+
+            // Starting X for the line
+            const lineStartX = 12;
+
+            // End X based on content width + some padding
+            const lineEndX = 33 + numberWidth + 2; // 2 is extra padding after the number
+
+            // Draw the dynamic line
+            pdf.line(lineStartX, 42, lineEndX, 42);
+
 
             // Keep your exact table width math for centered small table
             const wantedTableWidth = 110;
@@ -642,51 +696,152 @@
             // Shift table right by 20pt without changing its width
             const shiftX = 17; // CHANGED: positive = move right
 
-            pdf.autoTable({
-                startY: 60,
-                theme: 'plain',
-                // CHANGED: increase left, decrease right equally -> same table width, shifted right
-                margin: { left: margin + shiftX, right: Math.max(0, margin - shiftX) },
+            // =========================
+            // Helpers (no side-effects)
+            // =========================
+            function withPdfState(pdf, fn) {
+                const hasGS = typeof pdf.saveGraphicsState === 'function' && typeof pdf.restoreGraphicsState === 'function';
+                if (hasGS) pdf.saveGraphicsState();
 
-                styles: {
-                    font: 'helvetica',
-                    fontSize: 11.5,                       // smaller text
-                    textColor: [0, 0, 0],
-                    cellPadding: { top: 3, right: 6, bottom: 3, left: 6 }, // tight padding
-                    halign: 'left',
-                    valign: 'middle',
-                    lineWidth: 0                       // no default borders
-                },
-                headStyles: {
-                    fontStyle: 'bold',
-                    fillColor: [248, 248, 248],        // subtle header tint
-                    textColor: [0, 0, 0]
-                },
-                head: [['Driver', 'Truck']],
-                body: [[driver || '—', truck || '—']],
-                columnStyles: {
-                    0: { cellWidth: 48, overflow: 'ellipsize' },
-                    1: { cellWidth: 30, overflow: 'ellipsize' }
-                },
-                tableLineWidth: 0,                   // no outer box
-                tableLineColor: [255, 255, 255],
+                const prev = {
+                    font: pdf.getFont ? pdf.getFont() : null,
+                    size: pdf.getFontSize ? pdf.getFontSize() : null,
+                    text: pdf.getTextColor ? pdf.getTextColor() : null,
+                    draw: pdf.getDrawColor ? pdf.getDrawColor() : null,
+                    fill: pdf.getFillColor ? pdf.getFillColor() : null,
+                    line: pdf.getLineWidth ? pdf.getLineWidth() : null
+                };
 
-                // Only draw a light bottom rule per row
-                didDrawCell: (data) => {
-                    const doc = data.doc;
-                    const isRowEnd = data.column.index === data.table.columns.length - 1;
-                    if (!isRowEnd) return;
-                    const y = data.cell.y + data.cell.height;
-
-                    if (data.section === 'head') {
-                        doc.setDrawColor(210); doc.setLineWidth(0.2);
-                        doc.line(data.table.startX, y, data.table.startX + data.table.width, y);
-                    } else if (data.section === 'body') {
-                        doc.setDrawColor(235); doc.setLineWidth(0.15);
-                        doc.line(data.table.startX, y, data.table.startX + data.table.width, y);
-                    }
+                try { return fn(); }
+                finally {
+                    if (prev.font && pdf.setFont) pdf.setFont(prev.font.fontName, prev.font.fontStyle);
+                    if (prev.size != null && pdf.setFontSize) pdf.setFontSize(prev.size);
+                    if (prev.text != null && pdf.setTextColor) Array.isArray(prev.text) ? pdf.setTextColor(...prev.text) : pdf.setTextColor(prev.text);
+                    if (prev.draw != null && pdf.setDrawColor) Array.isArray(prev.draw) ? pdf.setDrawColor(...prev.draw) : pdf.setDrawColor(prev.draw);
+                    if (prev.fill != null && pdf.setFillColor) Array.isArray(prev.fill) ? pdf.setFillColor(...prev.fill) : pdf.setFillColor(prev.fill);
+                    if (prev.line != null && pdf.setLineWidth) pdf.setLineWidth(prev.line);
+                    if (hasGS) pdf.restoreGraphicsState();
                 }
+            }
+
+            const cardStyle = {
+                pad: 6,
+                radius: 2,
+                stroke: [220, 220, 220],
+                separator: [235, 235, 235],
+                titleSize: 12,
+                textSize: 11.5,
+                lineHeight: 5.2,  // adjust if your doc units differ
+                labelWidth: 28,
+                rowGap: 2,
+                titleGap: 8
+            };
+
+            // Draws a card and returns its bounds so we can place the next section precisely.
+            function drawKeyValueCard(pdf, { title, x, y, w, pairs }, s = cardStyle) {
+                return withPdfState(pdf, () => {
+                    const innerX = x + s.pad;
+                    const innerW = Math.max(0, w - s.pad * 20);
+                    const valueW = Math.max(0, innerW - s.labelWidth);
+
+                    // Use text size for measuring wraps
+                    pdf.setFont('helvetica', 'normal');
+                    pdf.setFontSize(s.textSize);
+
+                    const lineCounts = pairs.map(([_, v]) => {
+                        const wrapped = pdf.splitTextToSize(String(v ?? ''), valueW);
+                        return Array.isArray(wrapped) ? wrapped.length : 1;
+                    });
+
+                    const rowsH = lineCounts.reduce((a, n) => a + n * s.lineHeight, 0) + Math.max(0, pairs.length - 1) * s.rowGap;
+                    const totalH = s.pad + s.titleGap + s.pad + 1;
+
+                    // Border
+                    pdf.setDrawColor(...s.stroke);
+                    pdf.setLineWidth(0.4);
+                    if (pdf.roundedRect) pdf.roundedRect(x, y, w, totalH, s.radius, s.radius, 'S');
+                    else pdf.rect(x, y, w, totalH, 'S');
+
+                    // Title
+                    pdf.setFont('helvetica', 'bold');
+                    pdf.setFontSize(s.titleSize);
+                    pdf.text(title, innerX, y + s.pad + 1);
+
+                    // Rows
+                    pdf.setFont('helvetica', 'normal');
+                    pdf.setFontSize(s.textSize);
+                    let cy = y + s.pad + s.titleGap;
+
+                    for (let i = 0; i < pairs.length; i++) {
+                        const [label, value] = pairs[i];
+
+                        // label
+                        pdf.setFont('helvetica');
+                        pdf.text(String(label), innerX, cy);
+
+                        // value
+                        pdf.setFont('helvetica', 'normal');
+                        const wrapped = pdf.splitTextToSize(String(value ?? ''), valueW);
+                        pdf.text(wrapped, innerX + s.labelWidth, cy);
+
+                        const nLines = Array.isArray(wrapped) ? wrapped.length : 1;
+                        cy += nLines * s.lineHeight;
+
+
+                    }
+
+                    return { x, y, w, h: totalH, bottom: y + totalH };
+                });
+            }
+
+            // Optional: same row-rule styling you used before for AutoTable
+            function rowRules(pdf, data) {
+                const lastCol = data.table.columns.length - 1;
+                if (data.column.index !== lastCol) return;
+                const y = data.cell.y + data.cell.height;
+                if (data.section === 'head') {
+                    pdf.setDrawColor(210); pdf.setLineWidth(0.2);
+                } else {
+                    pdf.setDrawColor(235); pdf.setLineWidth(0.15);
+                }
+                pdf.line(data.table.startX, y, data.table.startX + data.table.width, y);
+            }
+
+            // =========================
+            // Usage
+            // =========================
+            // Assumes: pdf (jsPDF), margin, shiftX, and your data vars exist.
+            const startY = 50;
+            const gapBetweenCards = 0;  // horizontal gap is baked into your Xs below
+            const gapBelowCards = 6;  // vertical gap before the next table
+
+            // LEFT card (keep your exact X/W so width math is unchanged)
+            const leftCard = drawKeyValueCard(pdf, {
+                title: "Bill to:",
+                x: 13,   // <- your existing left X
+                y: startY,
+                w: 88,   // <- your existing width
+                pairs: [
+                    [bill || "—"],
+                ]
             });
+
+            // RIGHT card (keep your exact X/W so width math is unchanged)
+            const rightCard = drawKeyValueCard(pdf, {
+                title: "Driver / Equipment",
+                x: 108,  // <- your existing right card X
+                y: startY,
+                w: 88,   // <- your existing width
+                pairs: [
+                    [`${driver || "—"} / ${truck || "—"}`]
+                ]
+            });
+
+
+            // Compute where to start the next table (directly under the taller card)
+            const nextStartY = Math.max(leftCard.bottom, rightCard.bottom) + gapBelowCards;
+
+
 
 
 
@@ -695,7 +850,7 @@
             const amountText = formatCurrency(rate);
 
             pdf.autoTable({
-                startY: pdf.lastAutoTable.finalY + 10,
+                startY: nextStartY,
                 theme: 'plain',
                 margin: { left: 12, right: 12 },
                 styles: {
@@ -768,7 +923,7 @@
 
 
             // Footer
-            pdf.line(12, 280, pdf.internal.pageSize.width - 12, 280);
+            pdf.line(12, 280, pdf.internal.pageSize.width - 12, 280); // Footer line
             pdf.setFontSize(9.5); pdf.setTextColor(100);
             pdf.text('Thank you for your business! Please remit payment to SNA TRANSPORT INC. - MC 873145', 33, 285);
 
