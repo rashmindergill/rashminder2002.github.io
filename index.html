@@ -588,6 +588,175 @@
             background: var(--card);
         }
 
+        /* Modal */
+        .modal {
+            position: fixed;
+            inset: 0;
+            display: none;
+            z-index: 10000
+        }
+
+        .modal.open {
+            display: block
+        }
+
+        .modal-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, .35);
+            backdrop-filter: saturate(120%) blur(1px)
+        }
+
+        .modal-card {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: min(560px, 92vw);
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            padding: 14px;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 8px
+        }
+
+        .modal-body {
+            display: grid;
+            gap: 10px
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 10px
+        }
+
+        .chip-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 6px
+        }
+
+        .chip {
+            padding: 6px 10px;
+            border: 1px solid var(--line);
+            background: #fff;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        body.dark .chip {
+            background: #122441
+        }
+
+
+        /* compact item chips */
+        .items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px
+        }
+
+        .chip-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 10px;
+            border: 1px solid var(--line);
+            background: #fff;
+            border-radius: 999px;
+            font-size: 12.5px
+        }
+
+        .chip-item .chip-x {
+            border: 0;
+            background: transparent;
+            cursor: pointer
+        }
+
+        .chip-item .chip-x svg {
+            width: 14px;
+            height: 14px
+        }
+
+        /* running total field (read-only) */
+        .total-field input[readonly] {
+            background: #f7f7f7;
+            cursor: default
+        }
+
+        body.dark .chip-item {
+            background: #122441
+        }
+
+        body.dark .total-field input[readonly] {
+            background: #10233f
+        }
+
+        /* Footer bar inside each invoice row */
+        .row-footer {
+            grid-column: span 12;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 2px;
+        }
+
+        /* Keep actions on the right; remove extra spacing inherited from grid row */
+        .row-footer .row-actions {
+            display: flex;
+            gap: 8px;
+            margin: 0;
+            /* override old margin-top */
+            grid-column: auto;
+            /* ignore grid rule when in flex */
+        }
+
+        /* Make the total compact on the left */
+        .row-footer .total-field {
+            margin: 0
+        }
+
+        /* Shorter total field height */
+        .row-footer .total-field input {
+            padding-block: 10px;
+            /* was ~11px; shrink vertical padding */
+            padding-inline: 4px;
+            /* keep it compact horizontally */
+            font-size: 13px;
+            /* slightly smaller text */
+            line-height: 1.1;
+            /* tighter line box */
+            height: auto;
+            /* let padding control height */
+            border-radius: 10px;
+            /* optional: keeps a neat pill look */
+        }
+
+
+        @media (max-width:600px) {
+            .row-footer {
+                flex-direction: column;
+                align-items: stretch
+            }
+
+            .row-footer .total-field input {
+                width: 100%
+            }
+        }
+
+
 
 
 
@@ -653,6 +822,48 @@
         <hr class="divider" />
 
         <div id="invoice-container"></div>
+
+        <div id="itemModal" class="modal" aria-hidden="true">
+            <div class="modal-backdrop"></div>
+            <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="itemModalTitle">
+                <div class="modal-header">
+                    <h3 id="itemModalTitle">Add Custom Item</h3>
+                    <button type="button" class="icon-btn modal-close" aria-label="Close">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 6L6 18M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="field">
+                        <label>Item</label>
+                        <input id="item_name" placeholder="Detention, Lumper, Other…" />
+                        <div class="chip-row">
+                            <button type="button" class="chip" data-fill="Detention">Detention</button>
+                            <button type="button" class="chip" data-fill="Lumper">Lumper</button>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>Description</label>
+                        <input id="item_desc" placeholder="Notes for this item (optional)" />
+                    </div>
+
+                    <div class="field">
+                        <label>Amount ($)</label>
+                        <input id="item_amount" type="number" min="0" step="0.01" placeholder="e.g. 75.00" />
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn modal-cancel">Cancel</button>
+                    <button type="button" class="btn modal-save">Add Item</button>
+                </div>
+            </div>
+        </div>
+
 
         <div class="toolbar" role="toolbar" aria-label="invoice actions">
             <button class="btn add-row" aria-label="Add invoice">
@@ -848,6 +1059,8 @@
 
 
 
+
+
         /* ---------- Broker: input-first with dropdown suggestions ---------- */
         function createBrokerChooser() {
             const wrap = document.createElement('div');
@@ -935,6 +1148,158 @@
             });
         }
 
+        // === Custom Items UI ===
+        // Container + "Add Custom Item" button
+        function createCustomItemsSection() {
+            const wrap = document.createElement('div');
+            wrap.className = 'col-3';
+            wrap.innerHTML = `
+    <div class="field">
+      <div class="items"></div>
+      <button type="button" class="btn add-item" style="margin-top:0px">
+        <!-- Plus icon -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:18px;height:18px">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
+        Add Detention, Lumper, etc.
+      </button>
+    </div>`;
+            return wrap;
+        }
+
+        function addItemRow(container, label = 'Detention', description = '', amount = '') {
+            const row = document.createElement('div');
+            row.className = 'item';
+            row.style.display = 'grid';
+            row.style.gridTemplateColumns = '1fr 1.5fr 120px 42px'; // label, description, amount, remove
+            row.style.gap = '8px';
+            row.style.marginTop = '8px';
+            row.innerHTML = `
+    <input class="item-label" placeholder="Item (e.g., Detention, Lumper)" />
+    <input class="item-desc" placeholder="Description" />
+    <input class="item-amount" type="number" min="0" step="0.01" placeholder="Amount" />
+    <button type="button" class="icon-btn remove-item" title="Remove">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 6h18M8 6v14a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V6M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/>
+      </svg>
+    </button>`;
+            row.querySelector('.item-label').value = label;
+            row.querySelector('.item-desc').value = description; // NEW
+            row.querySelector('.item-amount').value = amount;
+            row.querySelector('.remove-item').addEventListener('click', () => row.remove());
+            container.appendChild(row);
+        }
+
+
+        function getCustomItems(row) {
+            return [...row.querySelectorAll('.items .chip-item')].map(el => ({
+                label: el.dataset.label || 'Custom',
+                desc: el.dataset.desc || '',
+                amount: Number(el.dataset.amount || 0)
+            })).filter(i => i.amount > 0);
+        }
+
+        function recalcRowTotal(row) {
+            const rate = Number(row.querySelector('.rate')?.value || 0);
+            const extras = getCustomItems(row);
+            const extrasSum = extras.reduce((a, b) => a + Number(b.amount || 0), 0);
+            const total = rate + extrasSum;
+            const out = row.querySelector('.ui-total');
+            if (out) out.value = `$${total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        }
+
+
+
+        // --- Modal helpers ---
+        let currentItemsContainer = null; // set by the row that opened the modal
+
+        function openItemModal(itemsContainer) {
+            currentItemsContainer = itemsContainer;
+            const modal = document.getElementById('itemModal');
+            modal.classList.add('open');
+            modal.setAttribute('aria-hidden', 'false');
+
+            // reset fields
+            document.getElementById('item_name').value = '';
+            document.getElementById('item_desc').value = '';
+            document.getElementById('item_amount').value = '';
+
+            // focus first input
+            setTimeout(() => document.getElementById('item_name').focus(), 0);
+        }
+
+        function closeItemModal() {
+            const modal = document.getElementById('itemModal');
+            modal.classList.remove('open');
+            modal.setAttribute('aria-hidden', 'true');
+            currentItemsContainer = null;
+        }
+
+        // once: wire modal buttons (call this once after DOM ready)
+        function initItemModalOnce() {
+            const modal = document.getElementById('itemModal');
+            if (!modal || modal.dataset.wired) return;
+            modal.dataset.wired = '1';
+
+            modal.querySelector('.modal-close').addEventListener('click', closeItemModal);
+            modal.querySelector('.modal-cancel').addEventListener('click', closeItemModal);
+
+            // chips fill the item name
+            modal.querySelectorAll('.chip').forEach(ch => {
+                ch.addEventListener('click', () => {
+                    document.getElementById('item_name').value = ch.dataset.fill || '';
+                    document.getElementById('item_amount').focus();
+                });
+            });
+
+            // Save -> add to the row's items list
+            modal.querySelector('.modal-save').addEventListener('click', () => {
+                const name = document.getElementById('item_name').value.trim() || 'Custom';
+                const desc = document.getElementById('item_desc').value.trim();
+                const amt = Number(document.getElementById('item_amount').value || 0);
+                if (!currentItemsContainer) return closeItemModal();
+                if (amt <= 0) { alert('Please enter a valid amount.'); return; }
+
+                addItemChip(currentItemsContainer, name, desc, amt.toFixed(2));
+                const row = currentItemsContainer.closest('.invoice-row');
+                if (row) recalcRowTotal(row);
+                closeItemModal();
+            });
+
+
+            // ESC closes
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && modal.classList.contains('open')) closeItemModal();
+            });
+
+            // click outside closes
+            modal.querySelector('.modal-backdrop').addEventListener('click', closeItemModal);
+        }
+
+        function addItemChip(container, label, desc, amount) {
+            const chip = document.createElement('span');
+            chip.className = 'chip-item';
+            chip.dataset.label = label;
+            chip.dataset.desc = desc || '';
+            chip.dataset.amount = String(Number(amount || 0));
+
+            chip.innerHTML = `
+    <span>${label} ${Number(amount || 0) > 0 ? ' $' + Number(amount).toFixed(2) : ''}</span>
+    <button type="button" class="chip-x" title="Remove">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 6L6 18M6 6l12 12"/>
+      </svg>
+    </button>
+  `;
+            chip.querySelector('.chip-x').addEventListener('click', () => {
+                chip.remove();
+                const row = container.closest('.invoice-row');
+                if (row) recalcRowTotal(row);
+            });
+            container.appendChild(chip);
+        }
+
+
 
 
         /* ---------- Row lifecycle ---------- */
@@ -946,11 +1311,24 @@
             const load = newField({ label: 'Load #', placeholder: 'e.g. 12345', className: 'col-3', attrs: { class: 'load', autocomplete: 'off' } });
             const billWrap = createBrokerChooser();
             const rate = newField({ label: 'Amount ($)', placeholder: 'e.g. 650', type: 'number', className: 'col-2', attrs: { class: 'rate', step: '0.01', min: '0' } });
+            const desc = newField({
+                label: 'Description',
+                placeholder: 'e.g. Pickup/Delivery notes, reference #s…',
+                className: 'col-3',
+                attrs: { class: 'desc' }
+            });
+
             const driverWrap = createDriverSelect(); // custom dropdown
             driverWrap.classList.add('col-3');
             const truck = newField({ label: 'Truck #', placeholder: 'Auto from Driver', className: 'col-2', attrs: { class: 'truck' } });
-            const invoice = newField({ label: 'Invoice #', placeholder: 'Auto from Load #', className: 'col-3', attrs: { class: 'invoice' } });
-            const date = newField({ label: 'Date', placeholder: '', type: 'date', className: 'col-3', attrs: { class: 'date' } });
+            const invoice = newField({ label: 'Invoice #', placeholder: 'Auto from Load #', className: 'col-2', attrs: { class: 'invoice' } });
+            const date = newField({ label: 'Date', placeholder: '', type: 'date', className: 'col-2', attrs: { class: 'date' } });
+            const totalField = document.createElement('div');
+            totalField.className = 'field col-2 total-field';
+            totalField.innerHTML = `
+  <label>Total</label>
+  <input class="ui-total" readonly value="$0.00" />
+`;
 
             // Actions (Preview / Duplicate / Delete)
             const actions = document.createElement('div');
@@ -959,13 +1337,25 @@
             const duplicateBtn = createIconButton('Duplicate row', 'M16 3H6a2 2 0 0 0-2 2v10M8 7h10a2 2 0 0 1 2 2v10M8 7v10a2 2 0 0 0 2 2h10', () => duplicateRow(row));
             const removeBtn = createIconButton('Remove row', 'M3 6h18M8 6v14a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V6M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2', () => row.remove());
             actions.append(previewBtn, duplicateBtn, removeBtn);
+            // ✅ New footer wrapper (after you've created `actions` and `totalField`)
+            const footer = document.createElement('div');
+            footer.className = 'row-footer';
+            footer.append(totalField, actions); // total on the left, actions on the right
+
+            const customItems = createCustomItemsSection();
 
             // Append
-            row.append(load, billWrap, rate, driverWrap, truck, invoice, date, actions);
+            row.append(load, billWrap, rate, driverWrap, desc, truck, invoice, date, customItems, footer);
             if (prefill.bill) { setBrokerName(row, prefill.bill); }
             attachBrokerBehavior(row);
 
             invoiceContainer.appendChild(row);
+
+            const itemsContainer = row.querySelector('.items');
+            row.querySelector('.add-item').addEventListener('click', () => openItemModal(itemsContainer));
+
+
+
 
             // Init values
             const dateInput = row.querySelector('.date'); dateInput.value = new Date().toISOString().split('T')[0];
@@ -985,6 +1375,10 @@
 
             attachSelectBehavior(row);
 
+            row.querySelector('.rate').addEventListener('input', () => recalcRowTotal(row));
+            recalcRowTotal(row); // initial
+
+
             return row;
         }
 
@@ -997,6 +1391,7 @@
                 truck: row.querySelector('.truck').value,
                 invoice: row.querySelector('.invoice').value,
                 date: row.querySelector('.date').value,
+                desc: row.querySelector('.desc').value       // <-- NEW
             };
             const newRow = addInvoiceRow(cloneData);
             newRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1028,16 +1423,19 @@
         }
 
         function generateInvoicePDF(row, opts = { download: true }) {
-const pdf = new jsPDF('p', 'mm', 'letter'); // portrait, millimeters, US Letter
+            const pdf = new jsPDF('p', 'mm', 'letter'); // portrait, millimeters, US Letter
 
-// Page & margins
-const PAGE_W = pdf.internal.pageSize.getWidth
-  ? pdf.internal.pageSize.getWidth()
-  : pdf.internal.pageSize.width;     // jsPDF v1/v2 compat
+            // Page & margins
+            const PAGE_W = pdf.internal.pageSize.getWidth
+                ? pdf.internal.pageSize.getWidth()
+                : pdf.internal.pageSize.width;     // jsPDF v1/v2 compat
 
-const MARGIN_L = 12;                 // ← change this for left margin
-const MARGIN_R = 12;                 // ← change this for RIGHT margin
-const RIGHT_X  = PAGE_W - MARGIN_R;  // right edge inside margin
+            const MARGIN_L = 12;                 // ← change this for left margin
+            const MARGIN_R = 12;                 // ← change this for RIGHT margin
+            const RIGHT_X = PAGE_W - MARGIN_R;  // right edge inside margin
+
+            const desc = (row.querySelector('.desc')?.value || '').trim();  // <-- NEW
+            const extras = getCustomItems(row);                              // <-- NEW
 
 
             const bill = getBrokerName(row) || '';
@@ -1099,7 +1497,7 @@ const RIGHT_X  = PAGE_W - MARGIN_R;  // right edge inside margin
             pdf.setFont('helvetica', 'normal');
             const numberWidth = pdf.getTextWidth(invoiceText);
 
-            
+
 
 
             // Keep your exact table width math for centered small table
@@ -1260,14 +1658,36 @@ const RIGHT_X  = PAGE_W - MARGIN_R;  // right edge inside margin
 
 
 
-            // Line items (compact, Apple-ish)
-            const amountText = formatCurrency(rate);
+            const lineHaulAmount = Number(rate || 0);
+            const bodyRows = [];
+
+            // Line Haul row with description from UI
+            bodyRows.push(['Line Haul', load || '—', desc, formatCurrency(lineHaulAmount)]);
+
+            // Each custom item as its own row (no load #, description optional -> keep empty or reuse label)
+            let total = lineHaulAmount;
+            extras.forEach(it => {
+                total += Number(it.amount || 0);
+                bodyRows.push([
+                    it.label,    // Item
+                    '',          // Load #
+                    it.desc,     // Description column
+                    formatCurrency(it.amount)
+                ]);
+            });
+
+
+            // Total row
+            bodyRows.push([
+                { content: '', colSpan: 2, styles: { halign: 'right' } },
+                { content: 'Total', styles: { halign: 'right', fontStyle: 'bold' } },
+                { content: formatCurrency(total), styles: { halign: 'left', fontStyle: 'bold' } }
+            ]);
 
             pdf.autoTable({
                 startY: nextStartY + 2,
                 theme: 'plain',
-                  margin: { left: MARGIN_L, right: MARGIN_R }, // ← right width control here
-
+                margin: { left: MARGIN_L, right: MARGIN_R },
                 styles: {
                     font: 'helvetica',
                     fontSize: 11.5,
@@ -1275,71 +1695,50 @@ const RIGHT_X  = PAGE_W - MARGIN_R;  // right edge inside margin
                     cellPadding: { top: 3, right: 6, bottom: 3, left: 6 },
                     halign: 'left',
                     valign: 'middle',
-                    lineWidth: 0 // no default borders
+                    lineWidth: 0
                 },
-                headStyles: {
-                    fontStyle: 'bold',
-                    fillColor: [248, 248, 248],
-                    textColor: [0, 0, 0]
-                },
+                headStyles: { fontStyle: 'bold', fillColor: [248, 248, 248], textColor: [0, 0, 0] },
                 head: [['Item', 'Load #', 'Description', 'Amount']],
-                body: [
-                    ['Line Haul', load || '—', '', amountText],
-                    [
-                        { content: '', colSpan: 2, styles: { halign: 'right' } }, // empty first two
-                        { content: 'Total', styles: { halign: 'right', fontStyle: 'bold' } },
-                        { content: amountText, styles: { halign: 'right', fontStyle: 'bold' } }
-                    ]
-                ],
+                body: bodyRows,
                 columnStyles: {
                     0: { cellWidth: 35, overflow: 'ellipsize' },
-                    1: { cellWidth: 51, overflow: 'ellipsize' },
-                    2: { cellWidth: 75, overflow: 'linebreak', halign: 'right' },
-                    3: { cellWidth: 28.5, halign: 'right' }
+                    1: { cellWidth: 49, overflow: 'ellipsize' },
+                    2: { cellWidth: 73, overflow: 'linebreak', halign: 'left' },
+                    3: { cellWidth: 32.5, halign: 'left' }
                 },
-
-                // Bold total row text
                 didParseCell: (data) => {
-                    if (data.section === 'body' && data.row.index === 1) {
+                    // Bold total row
+                    if (data.section === 'body' && data.row.index === bodyRows.length - 1) {
                         data.cell.styles.fontStyle = 'bold';
                     }
                 },
-                // Hairline separators; stronger rule above Total
                 didDrawCell: (data) => {
+                    // keep your existing line rules if you had them
                     const doc = data.doc;
                     const atRowEnd = data.column.index === data.table.columns.length - 1;
                     const startX = data.table.startX;
                     const endX = startX + data.table.width;
-
-                    // header bottom rule
                     if (data.section === 'head' && atRowEnd) {
                         const y = data.cell.y + data.cell.height;
                         doc.setDrawColor(255); doc.setLineWidth(0.2);
                         doc.line(startX, y, endX, y);
                         return;
                     }
-
                     if (data.section === 'body' && atRowEnd) {
-                        // detect the Total row robustly
-                        const isTotal =
-                            data.row.index === 1 ||                       // your current layout
-                            (Array.isArray(data.row.raw) && data.row.raw[1] === 'Total');
-
+                        const isTotal = data.row.index === bodyRows.length - 1;
                         if (isTotal) {
-                            // strong line ABOVE the total row
                             const yTop = data.cell.y;
                             doc.setDrawColor(190); doc.setLineWidth(0.3);
                             doc.line(startX, yTop, endX, yTop);
                         } else {
-                            // light row divider under normal rows
                             const yBottom = data.cell.y + data.cell.height;
                             doc.setDrawColor(235); doc.setLineWidth(0.15);
                             doc.line(startX, yBottom, endX, yBottom);
                         }
                     }
                 }
-
             });
+
 
 
             // Footer
@@ -1369,6 +1768,7 @@ const RIGHT_X  = PAGE_W - MARGIN_R;  // right edge inside margin
 
         /* ---------- Start with one row ---------- */
         addInvoiceRow();
+        initItemModalOnce();
     </script>
 </body>
 
