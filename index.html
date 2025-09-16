@@ -1424,8 +1424,10 @@
             // img.src = 'logo.png'
             // pdf.addImage(img, 'png', 170, 8, 30, 15)
 
-            pdf.setDrawColor(190); pdf.setLineWidth(0.2);
-            pdf.line(0, 30, pdf.internal.pageSize.width, 30);
+            pdf.setDrawColor(140, 140, 140); // Medium gray
+pdf.setLineWidth(0.35);
+pdf.line(0, 30, pdf.internal.pageSize.width, 30);
+
         }
 
         function generateInvoicePDF(row, opts = { download: true }) {
@@ -1545,7 +1547,7 @@
             const cardStyle = {
                 pad: 6,
                 radius: 2,
-                stroke: [220, 220, 220],
+                stroke: [170, 170, 170],
                 separator: [235, 235, 235],
                 titleSize: 12,
                 textSize: 11.5,
@@ -1703,7 +1705,7 @@
                     valign: 'middle',
                     lineWidth: 0
                 },
-                headStyles: { fontStyle: 'bold', fillColor: [248, 248, 248], textColor: [0, 0, 0] },
+                headStyles: { fontStyle: 'bold', fillColor: [225, 225, 225], textColor: [0, 0, 0] },
                 head: [['Item', 'Load #', 'Description', 'Amount']],
                 body: bodyRows,
                 columnStyles: {
@@ -1748,8 +1750,10 @@
 
 
             // Footer
+            pdf.setDrawColor(150, 150, 150); // Medium gray
+
             pdf.line(12, 265, pdf.internal.pageSize.width - 12, 265); // Footer line
-            pdf.setFontSize(9.5); pdf.setTextColor(100);
+            pdf.setFontSize(9.5); pdf.setTextColor(75);
             pdf.text('Thank you for your business! Please remit payment to SNA TRANSPORT INC. (MC 873145)', 36, 270);
 
             if (opts.download) {
