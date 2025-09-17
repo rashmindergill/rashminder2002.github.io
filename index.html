@@ -744,6 +744,15 @@
             /* optional: keeps a neat pill look */
         }
 
+        .logo-b {
+  display: block;
+  margin: 1px auto;
+  width: 150px;
+  height: auto;       /* prevents distortion */
+  object-fit: contain;
+}
+
+
 
         @media (max-width:600px) {
             .row-footer {
@@ -807,7 +816,8 @@
 <body>
     <div class="app">
         <div class="brand">
-            <h1 class="heading">SNA TRANSPORT INC.</h1>
+            <!-- <h1 class="heading">SNA TRANSPORT INC.</h1> -->
+              <img src="craiyon_101235_image.png" class="logo-b">
             <button class="icon-btn dark-toggle-fixed" id="darkModeToggle" aria-label="Toggle dark mode"
                 title="Toggle dark mode">
                 <!-- Moon (default icon) -->
