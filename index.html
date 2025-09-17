@@ -1404,7 +1404,7 @@
         function duplicateRow(row) {
             const cloneData = {
                 load: row.querySelector('.load').value,
-                bill: row.querySelector('.bill').value,
+    bill:    row.querySelector('.bill')?.value || "",   // works for input OR select
                 rate: row.querySelector('.rate').value,
                 driver: getSelectedDriver(row),
                 truck: row.querySelector('.truck').value,
