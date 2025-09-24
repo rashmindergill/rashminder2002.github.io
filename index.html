@@ -727,10 +727,9 @@
       .bulk-head,
       .bulk-row {
         /* one line: Load | Date | Rate | Broker | Driver | Remove */
-        grid-template-columns: 160px 160px 150px minmax(300px, 1fr) minmax(
-            260px,
-            1fr
-          ) 44px;
+        grid-template-columns:
+          160px 160px 150px minmax(300px, 1fr) minmax(260px, 1fr)
+          44px;
         min-width: 1080px;
       }
       .bulk-head {
@@ -1631,19 +1630,40 @@
       // Container + "Add Custom Item" button
       function createCustomItemsSection() {
         const wrap = document.createElement("div");
-        wrap.className = "col-3";
         wrap.innerHTML = `
     <div class="field">
       <div class="items"></div>
-      <button type="button" class="btn add-item" style="margin-top:0px">
-        <!-- Plus icon -->
+      <button type="button" class="btn add-item" style="margin-top:0">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:18px;height:18px">
           <path d="M12 5v14M5 12h14"/>
         </svg>
         Add Detention, Lumper, etc.
       </button>
-    </div>`;
+    </div>
+  `;
+
+        // Apply responsive grid span (col-3 normally, col-6 on mobile)
+        responsiveSpan(wrap); // <- defined below
+
         return wrap;
+      }
+
+      // Helper: toggles col-3/col-6 based on viewport and keeps it updated on resize
+      function responsiveSpan(
+        el,
+        query = "(max-width: 900px)",
+        mobileClass = "col-6",
+        desktopClass = "col-3"
+      ) {
+        const mql = window.matchMedia(query);
+        const apply = () => {
+          el.classList.remove(mobileClass, desktopClass);
+          el.classList.add(mql.matches ? mobileClass : desktopClass);
+        };
+        apply();
+        // Support old Safari
+        if (mql.addEventListener) mql.addEventListener("change", apply);
+        else mql.addListener(apply);
       }
 
       function addItemRow(
