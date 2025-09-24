@@ -613,11 +613,11 @@
         display: block;
       }
 
-      .modal-backdrop {
+      .modal-backdrop-2 {
         position: absolute;
         inset: 0;
         background: rgba(0, 0, 0, 0.35);
-        backdrop-filter: saturate(120%) blur(1px);
+        backdrop-filter: saturate(120%) blur(2px);
       }
 
       .modal-card {
@@ -644,6 +644,225 @@
       .modal-body {
         display: grid;
         gap: 10px;
+      }
+
+      /* Red remove icon button (light + dark) */
+      .icon-btn.danger {
+        background: #fee2e2;
+        border: 1px solid #fecaca;
+        color: #991b1b;
+      }
+      .icon-btn.danger:hover {
+        background: #fecaca;
+      }
+      .icon-btn.danger:focus {
+        box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.25);
+      }
+
+      /* Make the SVG stroke red (overrides the base .icon-btn svg rule) */
+      .icon-btn.danger svg {
+        stroke: #991b1b;
+      }
+
+      /* Dark mode */
+      body.dark .icon-btn.danger {
+        background: #3a0d0d;
+        border-color: #5a1a1a;
+        color: #fecaca;
+      }
+      body.dark .icon-btn.danger:hover {
+        background: #5a1a1a;
+      }
+      body.dark .icon-btn.danger svg {
+        stroke: #fecaca;
+      }
+
+      /* Bulk Add modal */
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(10, 15, 25, 0.55);
+        backdrop-filter: blur(2px);
+        display: none;
+        z-index: 99998;
+      }
+      .modal {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 99999;
+      }
+      .modal.open,
+      .modal-backdrop.open {
+        display: flex;
+      }
+      .modal-card {
+        width: min(1335px, 98vw);
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        padding: 18px;
+      }
+      .modal-card h3 {
+        margin: 0 0 12px;
+        font-size: 18px;
+        letter-spacing: 0.2px;
+      }
+
+      .bulk-table {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: var(--card);
+        overflow: auto;
+        max-height: 60vh;
+      }
+      .bulk-grid {
+        display: grid;
+        gap: 16px;
+        align-items: center;
+      } /* more space between inputs */
+      .bulk-head,
+      .bulk-row {
+        /* one line: Load | Date | Rate | Broker | Driver | Remove */
+        grid-template-columns: 160px 160px 150px minmax(300px, 1fr) minmax(
+            260px,
+            1fr
+          ) 44px;
+        min-width: 1080px;
+      }
+      .bulk-head {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        background: var(--card);
+        border-bottom: 1px solid var(--line);
+        padding: 12px 14px;
+        font-size: 12px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        font-weight: 700;
+      }
+      .rows {
+        padding: 10px 12px;
+      }
+      .bulk-row {
+        padding: 8px 0;
+        border-bottom: 1px dashed var(--line);
+      }
+      .bulk-row:last-child {
+        border-bottom: none;
+      }
+
+      .bulk-row input {
+        height: 42px;
+        padding: 10px 12px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        font-size: 14px;
+        background: #fff;
+        color: var(--ink);
+      }
+      body.dark .bulk-row input {
+        background: #122441;
+        border-color: var(--line);
+        color: var(--ink);
+      }
+      .bulk-row .select-trigger,
+      .bulk-row .select-input {
+        height: 42px;
+      }
+
+      .modal-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        margin-top: 14px;
+      }
+      .btn-danger {
+        background: #fee2e2;
+        border: 1px solid #fecaca;
+        color: #b91c1c;
+      }
+      .btn-danger:hover {
+        background: #fecaca;
+      }
+      body.dark .btn-danger {
+        background: #3a0d0d;
+        border-color: #5a1a1a;
+        color: #fecaca;
+      }
+
+      /* 1) Nuke the old fixed min-width if it's still around */
+      .bulk-head,
+      .bulk-row {
+        min-width: 0 !important;
+      }
+
+      /* 2) Let every grid cell actually shrink */
+      .bulk-row > *,
+      .bulk-head > * {
+        min-width: 0;
+      }
+
+      /* 3) Inputs & selects must not impose intrinsic min-widths */
+      .bulk-row input {
+        width: 100%;
+        min-width: 0;
+      }
+      .bulk-row .select.combo,
+      .bulk-row .driver-select {
+        width: 100%;
+        min-width: 0;
+      }
+      .bulk-row .select-input,
+      .bulk-row .select-trigger {
+        width: 100%;
+        min-width: 0;
+      }
+
+      /* 4) Container: no horizontal scroll, ever */
+      .bulk-table {
+        width: 100%;
+        overflow-x: hidden !important;
+      }
+      .modal-card {
+        max-width: 98vw;
+        overflow-x: hidden;
+      }
+
+      /* 5) One-line responsive columns (keeps spacing but shrinks instead of scrolling) */
+      .bulk-head,
+      .bulk-row {
+        grid-template-columns:
+          clamp(90px, 10vw, 150px) /* Load # */
+          clamp(80px, 12vw, 140px) /* Invoice # */
+          clamp(90px, 12vw, 140px) /* Date */
+          clamp(80px, 8vw, 110px) /* Rate ($)  — smaller */
+          clamp(300px, 10vw, 140px) /* Truck # */
+          clamp(220px, 10vw, 140px) /* Truck # */
+          clamp(50px, 10vw, 90px) /* Truck # */
+          minmax(140px, 1.3fr) /* Broker */
+          minmax(180px, 1fr) /* Driver */
+          44px; /* Remove */
+        gap: 12px;
+      }
+
+      /* Broker dropdown rendered in a portal above the modal */
+      .broker-portal-list {
+        position: fixed !important;
+        z-index: 100001 !important; /* higher than modal */
+        display: none; /* toggled by JS */
+      }
+
+      /* Driver dropdown rendered outside the modal */
+      .driver-portal-list {
+        position: fixed !important;
+        z-index: 100001 !important; /* above modal */
+        display: none; /* toggled by JS */
       }
 
       .modal-footer {
@@ -850,7 +1069,7 @@
       <div id="invoice-container"></div>
 
       <div id="itemModal" class="modal" aria-hidden="true">
-        <div class="modal-backdrop"></div>
+        <div class="modal-backdrop-2"></div>
         <div
           class="modal-card"
           role="dialog"
@@ -1208,6 +1427,149 @@
         if (input) input.value = value || "";
       }
 
+      function attachDriverPortal(row) {
+        const select = row.querySelector(".driver-select");
+        if (!select) return;
+
+        const trig = select.querySelector(".select-trigger");
+        const list = select.querySelector(".select-list");
+        if (!trig || !list) return;
+
+        // move the dropdown list to <body> once
+        if (!list.classList.contains("driver-portal-list")) {
+          list.classList.add("driver-portal-list");
+          document.body.appendChild(list);
+        }
+
+        function align() {
+          const r = trig.getBoundingClientRect();
+          list.style.minWidth = r.width + "px";
+          list.style.left = r.left + "px";
+          list.style.top = r.bottom + 6 + "px";
+        }
+
+        function openList() {
+          align();
+          list.style.display = "block";
+
+          const realign = () => align();
+          window.addEventListener("scroll", realign, true);
+          window.addEventListener("resize", realign, true);
+
+          const close = (e) => {
+            if (e && e.type === "keydown" && e.key !== "Escape") return;
+            list.style.display = "none";
+            document.removeEventListener("click", close, true);
+            document.removeEventListener("keydown", close, true);
+            window.removeEventListener("scroll", realign, true);
+            window.removeEventListener("resize", realign, true);
+          };
+
+          // close on outside click / Esc
+          setTimeout(() => {
+            document.addEventListener("click", close, true);
+            document.addEventListener("keydown", close, true);
+          }, 0);
+        }
+
+        // Intercept original trigger so we use the portal list instead
+        trig.addEventListener(
+          "click",
+          (e) => {
+            e.preventDefault();
+            e.stopImmediatePropagation(); // stop the in-modal opener
+            openList();
+          },
+          true
+        );
+
+        // Pick an option -> set driver & truck, then close
+        list.querySelectorAll(".option").forEach((opt) => {
+          opt.addEventListener("click", () => {
+            const val = opt.dataset.value || "";
+            setSelectedDriver(row, val); // your existing helper
+            const t = row.querySelector(".truck"); // auto truck #
+            if (t) {
+              t.value =
+                val === "Kuljeet" ? "701" : val === "Harpreet" ? "47" : "";
+            }
+            list.style.display = "none";
+          });
+        });
+      }
+
+      function attachBrokerPortal(row) {
+        const combo = row.querySelector(".select.combo");
+        if (!combo) return;
+
+        const caretBtn = combo.querySelector(".select-caret-btn");
+        const input = combo.querySelector(".broker-input");
+        const list = combo.querySelector(".select-list");
+        if (!caretBtn || !list) return;
+
+        // mark once and prepare
+        if (!list.classList.contains("broker-portal-list")) {
+          list.classList.add("broker-portal-list"); // gives fixed + high z-index
+          document.body.appendChild(list); // move list to body once
+        }
+
+        function align() {
+          const r = combo.getBoundingClientRect();
+          list.style.minWidth = r.width + "px";
+          list.style.left = r.left + "px";
+          list.style.top = r.bottom + 6 + "px";
+        }
+
+        function openList() {
+          align();
+          list.style.display = "block";
+
+          // live-realign while open
+          const realign = () => align();
+          window.addEventListener("scroll", realign, true);
+          window.addEventListener("resize", realign, true);
+
+          const close = (e) => {
+            if (e && e.type === "keydown" && e.key !== "Escape") return;
+            list.style.display = "none";
+            document.removeEventListener("click", close, true);
+            document.removeEventListener("keydown", close, true);
+            window.removeEventListener("scroll", realign, true);
+            window.removeEventListener("resize", realign, true);
+          };
+
+          // close on outside click / Esc
+          setTimeout(() => {
+            document.addEventListener("click", close, true);
+            document.addEventListener("keydown", close, true);
+          }, 0);
+        }
+
+        // Open via caret or ArrowDown in the input
+        caretBtn.addEventListener(
+          "click",
+          (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            openList();
+          },
+          true
+        );
+        input?.addEventListener("keydown", (e) => {
+          if (e.key === "ArrowDown") openList();
+        });
+
+        // Ensure clicking an option fills input and closes
+        list.querySelectorAll(".option").forEach((opt) => {
+          opt.addEventListener("click", () => {
+            if (input) input.value = opt.dataset.value || "";
+            list.style.display = "none";
+            // If you propagate defaults elsewhere, call it here:
+            // updateDefaultsFromRow(row);
+          });
+        });
+      }
+
       function attachBrokerBehavior(row) {
         const sel = row.querySelector(".select.combo");
         if (!sel) return;
@@ -1362,6 +1724,442 @@
         currentItemsContainer = null;
       }
 
+      // --- Bulk Add Modal ---------------------------------------------------------
+      function ensureBulkModal() {
+        if (document.getElementById("bulkModal")) return;
+
+        // Backdrop + modal shell
+        const backdrop = document.createElement("div");
+        backdrop.className = "modal-backdrop";
+        backdrop.id = "bulkBackdrop";
+
+        const modal = document.createElement("div");
+        modal.className = "modal";
+        modal.id = "bulkModal";
+        modal.innerHTML = `
+    <div class="modal-card bulk-modal">
+      <h3>Add Invoices (Bulk)</h3>
+
+      <div class="bulk-table">
+        <div class="bulk-head bulk-grid">
+          <div>Load #</div>
+          <div>Invoice #</div>
+          <div>Date</div>
+          <div>Rate ($)</div>
+          <div>Broker</div>
+          <div>Driver</div>
+          <div>Truck #</div>
+          <div></div>
+        </div>
+        <div class="rows" id="bulkRows"></div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn" id="bulkAddRow">+ Add Row</button>
+        <label style="margin-right:auto;display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--muted)">
+          <input type="checkbox" id="bulkCombine" /> Combine into one PDF
+        </label>
+        <button type="button" class="btn btn-danger" id="bulkCancel">Cancel</button>
+                <button type="button" class="btn" id="bulkPreview">Preview</button>
+      </div>
+    </div>
+  `;
+
+        document.body.append(backdrop, modal);
+
+        // wiring
+        document
+          .getElementById("bulkAddRow")
+          .addEventListener("click", addBulkLine);
+        document
+          .getElementById("bulkCancel")
+          .addEventListener("click", closeBulkModal);
+        document
+          .getElementById("bulkPreview")
+          .addEventListener("click", previewBulk);
+        backdrop.addEventListener("click", closeBulkModal);
+      }
+
+      function openBulkModal() {
+        ensureBulkModal();
+        document.getElementById("bulkBackdrop").classList.add("open");
+        document.getElementById("bulkModal").classList.add("open");
+        // add first row if empty
+        if (!document.querySelector("#bulkRows .bulk-row")) addBulkLine();
+        requestAnimationFrame(() => {
+          const rowsWrap = document.getElementById("bulkRows");
+          if (!rowsWrap) return; // still not present? bail safely.
+
+          // make sure at least one line exists
+          if (!rowsWrap.querySelector(".bulk-row")) addBulkLine();
+
+          // focus + select the first Load input
+          const firstLoad = rowsWrap.querySelector(".bulk-row .load");
+          if (firstLoad) {
+            firstLoad.focus();
+            firstLoad.select();
+          }
+        });
+      }
+
+      function closeBulkModal() {
+        document.getElementById("bulkBackdrop").classList.remove("open");
+        document.getElementById("bulkModal").classList.remove("open");
+      }
+
+      // Add a single-line row using your existing dropdowns
+      function addBulkLine() {
+        const rows = document.getElementById("bulkRows");
+        const isFirst = !rows.querySelector(".bulk-row");
+
+        const row = document.createElement("div");
+        row.className = "bulk-row bulk-grid";
+
+        // Load
+        const loadWrap = document.createElement("div");
+        const load = document.createElement("input");
+        load.placeholder = "e.g. 32543";
+        load.className = "load";
+        load.autocomplete = "off";
+        loadWrap.appendChild(load);
+
+        // Invoice (auto from Load)
+        const invWrap = document.createElement("div");
+        const invoice = document.createElement("input");
+        invoice.placeholder = "Auto from Load #";
+        invoice.className = "invoice";
+        invoice.autocomplete = "off";
+        invWrap.appendChild(invoice);
+        load.addEventListener("input", () => {
+          invoice.value = load.value;
+        });
+
+        // Date
+        const dateWrap = document.createElement("div");
+        const date = document.createElement("input");
+        date.type = "date";
+        date.className = "date";
+        date.value = new Date().toISOString().split("T")[0];
+        dateWrap.appendChild(date);
+
+        // Rate
+        const rateWrap = document.createElement("div");
+        const rate = document.createElement("input");
+        rate.type = "number";
+        rate.step = "0.01";
+        rate.min = "0";
+        rate.placeholder = "e.g. 650";
+        rate.className = "rate";
+        rateWrap.appendChild(rate);
+
+        // Broker (reuse your combo — remove label, keep control)
+        const brokerShell = createBrokerChooser(); // your function
+        const brokerCombo = brokerShell.querySelector(".select.combo"); // grab just the control
+        brokerShell.remove(); // discard labeled wrapper
+        const brokerWrap = document.createElement("div");
+        brokerWrap.appendChild(brokerCombo);
+
+        // Driver (reuse your driver select — remove label)
+        const driverShell = createDriverSelect(); // your function
+        const driverSelect = driverShell.querySelector(".driver-select"); // the control
+        driverShell.remove();
+        const driverWrap = document.createElement("div");
+        driverWrap.appendChild(driverSelect);
+
+        // Truck (auto from driver via your attachSelectBehavior)
+        const truckWrap = document.createElement("div");
+        const truck = document.createElement("input");
+        truck.placeholder = "Auto";
+        truck.className = "truck";
+        truckWrap.appendChild(truck);
+
+        // Remove
+        const removeWrap = document.createElement("div");
+        const removeBtn = document.createElement("button");
+        removeBtn.className = "icon-btn danger";
+        removeBtn.type = "button";
+        removeBtn.title = "Remove line";
+        removeBtn.setAttribute("aria-label", "Remove line");
+
+        removeBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6v14a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V6M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg>`;
+        removeBtn.addEventListener("click", () => row.remove());
+        removeWrap.appendChild(removeBtn);
+
+        row.append(
+          loadWrap,
+          invWrap,
+          dateWrap,
+          rateWrap,
+          brokerWrap,
+          driverWrap,
+          truckWrap,
+          removeWrap
+        );
+        rows.appendChild(row);
+
+        if (isFirst) {
+          // let the DOM paint, then focus/select
+          setTimeout(() => {
+            load.focus();
+            load.select();
+          }, 0);
+        }
+
+        // Hook up behaviors so:
+        //  - broker dropdown works
+        //  - driver dropdown works and auto-fills .truck input
+        attachBrokerBehavior(row);
+        attachBrokerPortal(row); // <- make broker list open above the modal
+        // uses .select.combo inside row
+        attachSelectBehavior(row);
+        attachDriverPortal(row); // <-- make its list open above the modal
+        // uses .driver-select and row.querySelector('.truck')
+      }
+
+      // Collect data from modal rows
+      function getBulkItems() {
+        return Array.from(document.querySelectorAll("#bulkRows .bulk-row")).map(
+          (row) => ({
+            load: row.querySelector(".load")?.value?.trim() || "",
+            invoice: row.querySelector(".invoice")?.value?.trim() || "",
+            date: row.querySelector(".date")?.value || "",
+            rate: row.querySelector(".rate")?.value || "",
+            bill: row.querySelector(".broker-input")?.value?.trim() || "", // from combo
+            driver: row.querySelector(".driver-select")?.dataset.value || "",
+            truck: row.querySelector(".truck")?.value?.trim() || "",
+          })
+        );
+      }
+
+      // Preview handler
+      function previewBulk() {
+        const items = getBulkItems().filter((x) => x.load);
+        if (!items.length) {
+          alert("Add at least one load.");
+          return;
+        }
+
+        const combine = document.getElementById("bulkCombine").checked;
+
+        if (combine) {
+          // Combined PDF (single file, multiple pages)
+          const pdf = new jsPDF("p", "mm", "letter");
+          items.forEach((it, idx) => {
+            if (idx > 0) pdf.addPage("letter", "p");
+            drawInvoicePageOnto(pdf, it); // helper below
+          });
+          pdf.save("Invoices - Combined.pdf");
+        } else {
+          // Individual previews (new tabs)
+          items.forEach((it) => {
+            // Create a temp "row-like" object to reuse your existing generator
+            const fakeRow = document.createElement("div");
+            fakeRow.innerHTML = `
+        <input class="load" value="${it.load}">
+        <input class="rate" value="${it.rate}">
+        <input class="invoice" value="${it.invoice || it.load}">
+        <input class="date" value="${it.date}">
+        <input class="truck" value="${it.truck}">
+        <div class="driver-select" data-value="${it.driver}"></div>
+        <input class="broker-input" value="${it.bill}">
+      `;
+            generateInvoicePDF(fakeRow, { download: false });
+          });
+        }
+      }
+
+      // Draw one invoice page onto an existing jsPDF (copied from your generator body)
+      function drawInvoicePageOnto(pdf, data) {
+        // Build a temporary "row" so we can reuse your helpers directly
+        const row = document.createElement("div");
+        row.innerHTML = `
+    <input class="load" value="${data.load}">
+    <input class="rate" value="${data.rate}">
+    <input class="invoice" value="${data.invoice || data.load}">
+    <input class="date" value="${data.date}">
+    <input class="truck" value="${data.truck}">
+    <div class="driver-select" data-value="${data.driver}"></div>
+    <input class="broker-input" value="${data.bill}">
+  `;
+
+        // We’ll reuse the same inner drawing (from your generateInvoicePDF),
+        // except we DON’T create or save a new jsPDF here.
+        // Minimal replication below (uses your drawHeader + table section):
+        const bill = data.bill || "";
+        const load = data.load || "";
+        const rate = data.rate || "";
+        const invoiceNo = data.invoice || data.load || "";
+        const date = data.date || "";
+        const driver = data.driver || "";
+        const truck = data.truck || "";
+
+        // --- Header & title (same as your function) ---
+        drawHeader(pdf);
+
+        // --- Title + right meta (SAME coordinates as generateInvoicePDF) ---
+        pdf.setFont("helvetica", "light");
+        pdf.setFontSize(30);
+        pdf.setTextColor(95);
+        pdf.text("INVOICE", 158, 20); // SAME (fixed x)
+
+        pdf.setTextColor(0);
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(11.5);
+        pdf.text("Date:", 200 - 32, 41, { align: "right" }); // SAME
+        pdf.setFont("helvetica", "normal");
+        pdf.text(date || "-", 200 - 20, 41, { align: "right" }); // SAME
+
+        // --- "Invoice #" left block (SAME) ---
+        pdf.setDrawColor(210);
+        pdf.setLineWidth(0.2);
+        pdf.setFont("helvetica", "bold");
+        pdf.text("Invoice #", 13, 41); // SAME
+        pdf.setFont("helvetica", "normal");
+        pdf.text(invoiceNo || "-", 32, 41); // SAME
+
+        // Cards
+        const startY = 50;
+        const gapBelowCards = 6;
+
+        function card(title, x, y, w, text) {
+          const pad = 6,
+            radius = 2,
+            h = pad + 8 + pad + 1;
+          pdf.setDrawColor(170);
+          pdf.setLineWidth(0.4);
+          if (pdf.roundedRect) pdf.roundedRect(x, y, w, h, radius, radius, "S");
+          else pdf.rect(x, y, w, h, "S");
+          pdf.setFont("helvetica", "bold");
+          pdf.setFontSize(12);
+          pdf.text(title, x + pad, y + pad + 1);
+          pdf.setFont("helvetica", "normal");
+          pdf.setFontSize(11.5);
+          pdf.text(String(text || ""), x + pad, y + pad + 8);
+          return y + h;
+        }
+
+        const leftBottom = card("Bill to:", 13, startY, 91, bill || "—"); // SAME
+        const rightBottom = card(
+          "Driver / Equipment",
+          110,
+          startY,
+          91,
+          `${driver || "—"} / ${truck || "—"}`
+        ); // SAME
+        const nextStartY = Math.max(leftBottom, rightBottom) + gapBelowCards;
+
+        // Table
+        const amountText = formatCurrency(rate);
+        pdf.autoTable({
+          startY: nextStartY + 2,
+          theme: "plain",
+          margin: { left: 12, right: 12 },
+          styles: {
+            font: "helvetica",
+            fontSize: 11.5,
+            textColor: [0, 0, 0],
+            cellPadding: { top: 3, right: 6, bottom: 3, left: 6 },
+            halign: "left",
+            valign: "middle",
+            lineWidth: 0,
+          },
+          headStyles: {
+            fontStyle: "bold",
+            fillColor: [248, 248, 248],
+            textColor: [0, 0, 0],
+          },
+          head: [["Item", "Load #", "Description", "Amount"]],
+          body: [
+            ["Line Haul", load || "—", "", amountText],
+            [
+              { content: "", colSpan: 2, styles: { halign: "right" } },
+              {
+                content: "Total",
+                styles: { halign: "right", fontStyle: "bold" },
+              },
+              {
+                content: amountText,
+                styles: { halign: "right", fontStyle: "bold" },
+              },
+            ],
+          ],
+          columnStyles: {
+            0: { cellWidth: 35 },
+            1: { cellWidth: 50 },
+            2: { cellWidth: 73, halign: "right" },
+            3: { cellWidth: 27, halign: "right" },
+          },
+          didParseCell: (d) => {
+            if (d.section === "body" && d.row.index === 1) {
+              d.cell.styles.fontStyle = "bold";
+            }
+          },
+          didDrawCell: (d) => {
+            const doc = d.doc,
+              atEnd = d.column.index === d.table.columns.length - 1,
+              sx = d.table.startX,
+              ex = sx + d.table.width;
+            if (d.section === "head" && atEnd) {
+              const y = d.cell.y + d.cell.height;
+              doc.setDrawColor(255);
+              doc.setLineWidth(0.2);
+              doc.line(sx, y, ex, y);
+              return;
+            }
+            if (d.section === "body" && atEnd) {
+              const isTotal =
+                d.row.index === 1 ||
+                (Array.isArray(d.row.raw) && d.row.raw[1] === "Total");
+              if (isTotal) {
+                const yTop = d.cell.y;
+                doc.setDrawColor(190);
+                doc.setLineWidth(0.3);
+                doc.line(sx, yTop, ex, yTop);
+              } else {
+                const yBottom = d.cell.y + d.cell.height;
+                doc.setDrawColor(235);
+                doc.setLineWidth(0.15);
+                doc.line(sx, yBottom, ex, yBottom);
+              }
+            }
+          },
+        });
+
+        // --- Footer (SAME Y for letter) ---
+        pdf.setDrawColor(130, 130, 130);
+        pdf.line(12, 265, PAGE_W - 12, 265); // SAME
+        pdf.setFontSize(9.5);
+        pdf.setTextColor(75);
+        pdf.text(
+          "Thank you for your business! Please remit payment to SNA TRANSPORT INC. (MC 873145)",
+          36,
+          270
+        );
+      }
+
+      // 1) Single entry point for Bulk Add (row is optional)
+      window.BulkAdd = window.BulkAdd || {};
+      BulkAdd.open = function (anchorRow) {
+        // open your existing modal
+        openBulkModal(anchorRow);
+      };
+
+      // 2) Toolbar button -> use BulkAdd.open (no row)
+      (function addBulkButtonOnce() {
+        const tb = document.querySelector(".toolbar");
+        if (!tb || tb.querySelector(".bulk-add-btn")) return;
+        const btn = document.createElement("button");
+        btn.className = "btn bulk-add-btn";
+        btn.innerHTML = `
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M3 12h18M3 6h18M3 18h18"/>
+    </svg>
+    Bulk Add
+  `;
+        btn.addEventListener("click", () => BulkAdd.open());
+        tb.appendChild(btn);
+      })();
+
       // once: wire modal buttons (call this once after DOM ready)
       function initItemModalOnce() {
         const modal = document.getElementById("itemModal");
@@ -1511,6 +2309,10 @@
           "M3 6h18M8 6v14a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V6M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2",
           () => row.remove()
         );
+        removeBtn.className = "icon-btn danger";
+        removeBtn.type = "button";
+        removeBtn.title = "Remove row";
+        removeBtn.setAttribute("aria-label", "Remove line");
         actions.append(previewBtn, duplicateBtn, removeBtn);
         // ✅ New footer wrapper (after you've created `actions` and `totalField`)
         const footer = document.createElement("div");
@@ -1518,6 +2320,14 @@
         footer.append(totalField, actions); // total on the left, actions on the right
 
         const customItems = createCustomItemsSection();
+
+        const bulkBtn = createIconButton(
+          "Bulk Add",
+          "M4 4h7v7H4z M13 4h7v7h-7z M8 13h7v7H8z",
+          () => BulkAdd.open(row) // ✅ same entry point, but with row context
+        );
+
+        actions.append(previewBtn, bulkBtn, duplicateBtn, removeBtn);
 
         // Append
         row.append(
